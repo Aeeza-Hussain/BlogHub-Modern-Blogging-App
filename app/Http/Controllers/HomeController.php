@@ -9,34 +9,78 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
+    /**
+     * Show the home page.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
     public function index()
     {
-        $featuredArticles = Article::with(['category', 'author'])
+        // Hero / Featured article
+        $heroArticle = Article::with(['category', 'author'])
             ->where('is_featured', true)
-            ->latest()
-            ->take(3)
-            ->get();
+            ->latest('published_at')
+            ->first();
 
+        if (!$heroArticle) {
+            $heroArticle = Article::with(['category', 'author'])
+                ->orderBy('views_count', 'desc')
+                ->first();
+        }
+
+        $excludedIds = $heroArticle ? [$heroArticle->id] : [];
+
+        // Trending articles (top engagement)
         $trendingArticles = Article::with(['category', 'author'])
+            ->whereNotIn('id', $excludedIds)
             ->where('is_trending', true)
-            ->latest()
+            ->latest('published_at')
             ->take(4)
             ->get();
 
+        if ($trendingArticles->count() < 4) {
+            $additionalTrending = Article::with(['category', 'author'])
+                ->whereNotIn('id', array_merge($excludedIds, $trendingArticles->pluck('id')->toArray()))
+                ->orderBy('views_count', 'desc')
+                ->take(4 - $trendingArticles->count())
+                ->get();
+            $trendingArticles = $trendingArticles->merge($additionalTrending);
+        }
+
+        $excludedIds = array_merge($excludedIds, $trendingArticles->pluck('id')->toArray());
+
+        // Latest published articles for main section grid
         $latestArticles = Article::with(['category', 'author'])
-            ->latest()
-            ->paginate(6);
+            ->whereNotIn('id', $excludedIds)
+            ->latest('published_at')
+            ->take(6)
+            ->get();
 
-        $categories = Category::withCount('articles')->take(10)->get();
-        $authors = Author::withCount('articles')->take(6)->get();
+        // Categories with count
+        $categories = Category::withCount('articles')->get();
 
+        // Top authors with count
+        $featuredAuthors = Author::withCount('articles')
+            ->orderBy('articles_count', 'desc')
+            ->take(4)
+            ->get();
+
+        // Stats counter
         $stats = [
             'total_articles' => Article::count(),
+            'total_views' => Article::sum('views_count'),
             'total_authors' => Author::count(),
-            'total_readers' => 45800,
             'total_categories' => Category::count(),
         ];
 
-        return view('home', compact('featuredArticles', 'trendingArticles', 'latestArticles', 'categories', 'authors', 'stats'));
+        return view('home', compact(
+            'heroArticle',
+            'trendingArticles',
+            'latestArticles',
+            'categories',
+            'featuredAuthors',
+            'stats'
+        ));
     }
 }
+

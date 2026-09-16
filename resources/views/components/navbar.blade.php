@@ -60,9 +60,40 @@
             <i class="fas fa-moon"></i>
           </button>
 
-          <a href="{{ route('login') }}" class="btn btn-sm btn-outline-light px-3">Login</a>
-          <a href="{{ route('register') }}" class="btn btn-sm btn-bh-accent px-3">Register</a>
+          @auth
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center gap-2 px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-user-circle fs-6"></i>
+                <span>{{ Auth::user()->name }}</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow">
+                <li>
+                  <a class="dropdown-item" href="{{ route('dashboard.index') }}">
+                    <i class="fas fa-tachometer-alt me-2 text-accent"></i> Dashboard
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ route('blogs.create') }}">
+                    <i class="fas fa-pen-nib me-2 text-accent"></i> Create Article
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                    @csrf
+                    <button type="submit" class="dropdown-item text-danger">
+                      <i class="fas fa-sign-out-alt me-2"></i> Logout
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </div>
+          @else
+            <a href="{{ route('login') }}" class="btn btn-sm btn-outline-light px-3">Login</a>
+            <a href="{{ route('register') }}" class="btn btn-sm btn-bh-accent px-3">Register</a>
+          @endauth
         </div>
+
       </div>
     </div>
   </div>
