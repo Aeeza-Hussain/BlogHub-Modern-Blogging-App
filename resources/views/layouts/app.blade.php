@@ -30,11 +30,41 @@
 
     <!-- Main Content Body -->
     <main>
+        @if(session('success') || session('error') || session('status'))
+            <div class="container mt-3">
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 shadow-sm border-0" role="alert">
+                        <i class="fas fa-check-circle fs-5 text-success"></i>
+                        <div>{{ session('success') }}</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 shadow-sm border-0" role="alert">
+                        <i class="fas fa-exclamation-circle fs-5 text-danger"></i>
+                        <div>{{ session('error') }}</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if(session('status'))
+                    <div class="alert alert-info alert-dismissible fade show d-flex align-items-center gap-2 shadow-sm border-0" role="alert">
+                        <i class="fas fa-info-circle fs-5 text-info"></i>
+                        <div>{{ session('status') }}</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+            </div>
+        @endif
+
         @yield('content')
     </main>
 
     <!-- Footer Component -->
-    <x-footer />
+    @unless(request()->routeIs('login', 'register') || request()->is('login', 'register'))
+        <x-footer />
+    @endunless
 
     <!-- Back to Top Floating Button -->
     <button id="back-to-top" aria-label="Back to top">

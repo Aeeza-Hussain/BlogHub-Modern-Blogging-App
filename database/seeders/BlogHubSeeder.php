@@ -7,12 +7,25 @@ use App\Models\Category;
 use App\Models\Author;
 use App\Models\Article;
 use App\Models\Comment;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class BlogHubSeeder extends Seeder
 {
     public function run(): void
     {
+        // 0. Create Default Demo Users
+        User::firstOrCreate(
+            ['email' => 'aleezeh16@gmail.com'],
+            ['name' => 'Aleeza Fatima', 'password' => Hash::make('password')]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'admin@bloghub.com'],
+            ['name' => 'BlogHub Admin', 'password' => Hash::make('password')]
+        );
+
         // 1. Create 10 Categories
         $categoriesData = [
             ['name' => 'Technology', 'icon' => 'fa-laptop-code', 'description' => 'Latest trends in software, AI, hardware, and web development.', 'color' => '#1F2A44'],

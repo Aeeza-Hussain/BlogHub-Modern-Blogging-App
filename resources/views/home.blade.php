@@ -274,29 +274,5 @@
   </div>
 </section>
 @endif
-
-<!-- Newsletter Section -->
-<section class="py-5">
-  <div class="container">
-    <div class="bh-card bg-dark text-white p-5 rounded-4 shadow-lg position-relative overflow-hidden" style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);">
-      <div class="row align-items-center g-4">
-        <div class="col-lg-7">
-          <span class="badge bg-danger mb-2 font-mono">Weekly Digest</span>
-          <h2 class="font-heading fw-bold display-6 mb-2">Get the latest articles directly in your inbox</h2>
-          <p class="text-muted mb-0 fs-6">No spam ever. Unsubscribe at any time with one click.</p>
-        </div>
-        <div class="col-lg-5">
-          <form onsubmit="event.preventDefault(); alert('Thank you for subscribing!');" class="d-flex gap-2">
-            <input type="email" class="form-control form-control-lg bg-secondary border-0 text-white" placeholder="Enter your email address" required>
-            <button type="submit" class="btn btn-bh-accent btn-lg px-4 shrink-0">
-              Subscribe
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 @endsection
 

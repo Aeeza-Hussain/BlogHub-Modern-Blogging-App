@@ -461,3 +461,218 @@ pre code {
 .animate-pulse {
   animation: heartPulse 0.35s ease-in-out;
 }
+
+/* ==========================================
+   Auth Pages (Login & Register) Styling
+   ========================================== */
+.bh-auth-wrapper {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  background: radial-gradient(circle at 10% 20%, rgba(200, 70, 31, 0.05) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(31, 42, 68, 0.05) 0%, transparent 40%);
+}
+
+[data-theme="dark"] .bh-auth-wrapper {
+  background: radial-gradient(circle at 10% 20%, rgba(255, 107, 74, 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(129, 140, 248, 0.08) 0%, transparent 40%);
+}
+
+.bh-auth-card {
+  background: var(--bh-card-bg);
+  border: 1px solid var(--bh-border);
+  border-radius: var(--bh-radius-lg);
+  box-shadow: var(--bh-shadow-lg);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.bh-auth-header-badge {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--bh-primary), var(--bh-accent));
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(200, 70, 31, 0.25);
+}
+
+.bh-auth-input-group .input-group-text {
+  background-color: var(--bh-light-subtle);
+  border-color: var(--bh-border);
+  color: var(--bh-muted);
+}
+
+.bh-auth-input-group .form-control {
+  background-color: var(--bh-card-bg);
+  border-color: var(--bh-border);
+  color: var(--bh-ink);
+  padding: 0.75rem 1rem;
+}
+
+.bh-auth-input-group .form-control:focus {
+  border-color: var(--bh-accent);
+  box-shadow: 0 0 0 0.25rem rgba(200, 70, 31, 0.15);
+}
+
+.bh-demo-box {
+  background-color: var(--bh-light-subtle);
+  border: 1px dashed var(--bh-border);
+  border-radius: var(--bh-radius);
+  padding: 1rem;
+}
+
+/* ==========================================
+   Interactive Sorting Suite & Visualizer Lab
+   ========================================== */
+.sorting-lab-card {
+  background: var(--bh-card-bg);
+  border: 1px solid var(--bh-border);
+  border-radius: var(--bh-radius-lg);
+  box-shadow: var(--bh-shadow-lg);
+  padding: 1.5rem;
+}
+
+.sorting-display-area {
+  min-height: 220px;
+  background: var(--bh-light-subtle);
+  border: 1px solid var(--bh-border);
+  border-radius: var(--bh-radius);
+  padding: 1rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shelves View (Bar Chart) */
+.view-shelves .sort-item {
+  background: linear-gradient(180deg, var(--bh-accent), var(--bh-primary));
+  border-radius: 4px 4px 0 0;
+  width: 28px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding-bottom: 4px;
+  transition: height 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.view-shelves .sort-item.active-compare {
+  background: #EAB308 !important;
+  transform: scaleY(1.05);
+}
+.view-shelves .sort-item.active-swap {
+  background: #EF4444 !important;
+  transform: scaleY(1.1);
+}
+.view-shelves .sort-item.sorted-done {
+  background: #10B981 !important;
+}
+
+/* Cards View */
+.view-cards {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.view-cards .sort-item {
+  background: var(--bh-card-bg);
+  border: 2px solid var(--bh-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--bh-ink);
+  box-shadow: var(--bh-shadow-sm);
+  transition: all 0.25s ease;
+  min-width: 48px;
+  text-align: center;
+}
+.view-cards .sort-item.active-compare {
+  border-color: #EAB308;
+  background: rgba(234, 179, 8, 0.15);
+  transform: translateY(-4px);
+}
+.view-cards .sort-item.active-swap {
+  border-color: #EF4444;
+  background: rgba(239, 68, 68, 0.15);
+  transform: scale(1.1);
+}
+.view-cards .sort-item.sorted-done {
+  border-color: #10B981;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10B981;
+}
+
+/* Penny Stack View */
+.view-pennystack {
+  align-items: flex-end;
+  gap: 12px;
+}
+.view-pennystack .sort-item {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 2px;
+}
+.view-pennystack .penny-coin {
+  width: 32px;
+  height: 9px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  border: 1px solid #B45309;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+.view-pennystack .sort-item.active-compare .penny-coin {
+  background: linear-gradient(135deg, #FACC15, #EAB308);
+}
+.view-pennystack .sort-item.active-swap .penny-coin {
+  background: linear-gradient(135deg, #F87171, #EF4444);
+}
+.view-pennystack .sort-item.sorted-done .penny-coin {
+  background: linear-gradient(135deg, #34D399, #10B981);
+}
+
+/* Multi-Level View */
+.view-multilevel {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 6px;
+  overflow-y: auto;
+  max-height: 220px;
+}
+.view-multilevel .sort-item {
+  background: var(--bh-card-bg);
+  border: 1px solid var(--bh-border);
+  border-left: 4px solid var(--bh-accent);
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+.view-multilevel .sort-item.active-compare {
+  border-left-color: #EAB308;
+  background: rgba(234, 179, 8, 0.08);
+}
+.view-multilevel .sort-item.active-swap {
+  border-left-color: #EF4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+.view-multilevel .sort-item.sorted-done {
+  border-left-color: #10B981;
+  background: rgba(16, 185, 129, 0.08);
+}
