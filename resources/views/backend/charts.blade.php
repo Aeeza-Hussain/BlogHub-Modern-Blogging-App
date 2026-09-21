@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('backend.layouts.admin')
 
 @section('title', 'BlogHub - Analytics & Charts')
 

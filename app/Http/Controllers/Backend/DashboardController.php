@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Backend;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Article;
 use App\Models\Category;
@@ -25,7 +26,7 @@ class DashboardController extends Controller
 
         $categories = Category::withCount('articles')->get();
 
-        return view('admin.index', compact(
+        return view('backend.index', compact(
             'totalArticles',
             'totalViews',
             'totalLikes',
@@ -62,7 +63,7 @@ class DashboardController extends Controller
         $articles = $query->latest()->paginate(10)->withQueryString();
         $categories = Category::all();
 
-        return view('admin.articles', compact('articles', 'categories'));
+        return view('backend.articles', compact('articles', 'categories'));
     }
 
     public function deleteArticle($id)
@@ -81,18 +82,18 @@ class DashboardController extends Controller
 
         $topArticles = Article::orderBy('views_count', 'desc')->take(5)->get();
 
-        return view('admin.charts', compact('categoryNames', 'categoryCounts', 'topArticles'));
+        return view('backend.charts', compact('categoryNames', 'categoryCounts', 'topArticles'));
     }
 
     public function account()
     {
         $author = Author::first();
-        return view('admin.account', compact('author'));
+        return view('backend.account', compact('author'));
     }
 
     public function settings()
     {
-        return view('admin.settings');
+        return view('backend.settings');
     }
 
     public function notifications()
@@ -100,11 +101,11 @@ class DashboardController extends Controller
         $messages = ContactMessage::latest()->take(10)->get();
         $comments = Comment::with('article')->latest()->take(10)->get();
 
-        return view('admin.notifications', compact('messages', 'comments'));
+        return view('backend.notifications', compact('messages', 'comments'));
     }
 
     public function help()
     {
-        return view('admin.help');
+        return view('backend.help');
     }
 }
