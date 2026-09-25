@@ -22,6 +22,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'contact',
+        'gender',
+        'dob',
+        'image',
+        'about',
+        'niche',
     ];
 
     /**
@@ -44,6 +50,21 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'dob' => 'date',
         ];
+    }
+
+    /**
+     * Get the avatar URL for the user.
+     */
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->image) {
+            if (str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://')) {
+                return $this->image;
+            }
+            return asset('storage/' . $this->image);
+        }
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=C8461F&color=ffffff&bold=true';
     }
 }

@@ -26,11 +26,8 @@
                         <div class="col-auto">
                             <div class="item-label mb-2"><strong>Avatar</strong></div>
                             <div class="item-data">
-                                <img class="profile-image rounded-circle" src="{{ $author->avatar ?? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100' }}" style="width: 60px; height: 60px; object-fit: cover;" alt="Avatar">
+                                <img class="profile-image rounded-circle" src="{{ auth()->user()->avatar_url ?? ($author->avatar ?? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100') }}" style="width: 60px; height: 60px; object-fit: cover;" alt="Avatar">
                             </div>
-                        </div>
-                        <div class="col text-end">
-                            <button class="btn-sm app-btn-secondary" disabled>Change</button>
                         </div>
                     </div>
                 </div>
@@ -38,11 +35,8 @@
                 <div class="item border-bottom py-3">
                     <div class="row justify-content-between align-items-center">
                         <div class="col-auto">
-                            <div class="item-label"><strong>Name</strong></div>
-                            <div class="item-data fw-bold">{{ $author->name ?? 'Sarah Jenkins' }}</div>
-                        </div>
-                        <div class="col text-end">
-                            <button class="btn-sm app-btn-secondary" disabled>Edit</button>
+                            <div class="item-label"><strong>Full Name</strong></div>
+                            <div class="item-data fw-bold">{{ auth()->user()->name ?? ($author->name ?? 'Sarah Jenkins') }}</div>
                         </div>
                     </div>
                 </div>
@@ -50,8 +44,12 @@
                 <div class="item border-bottom py-3">
                     <div class="row justify-content-between align-items-center">
                         <div class="col-auto">
-                            <div class="item-label"><strong>Role &amp; Specialty</strong></div>
-                            <div class="item-data">{{ $author->specialty ?? 'Senior Tech Writer & Editor' }}</div>
+                            <div class="item-label"><strong>Primary Niche &amp; Specialty</strong></div>
+                            <div class="item-data">
+                                <span class="badge bg-primary text-white fs-6 py-1 px-3">
+                                    <i class="fa-solid fa-tag me-1"></i> {{ auth()->user()->niche ?? ($author->specialty ?? 'Technology & AI') }}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -59,8 +57,31 @@
                 <div class="item border-bottom py-3">
                     <div class="row justify-content-between align-items-center">
                         <div class="col-auto">
-                            <div class="item-label"><strong>Bio</strong></div>
-                            <div class="item-data text-muted">{{ $author->bio ?? 'Passionate software developer and technical communicator covering web frameworks, UI/UX, and cloud solutions.' }}</div>
+                            <div class="item-label"><strong>Contact Number</strong></div>
+                            <div class="item-data">{{ auth()->user()->contact ?? 'Not provided' }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item border-bottom py-3">
+                    <div class="row justify-content-between align-items-center">
+                        <div class="col-auto">
+                            <div class="item-label"><strong>Gender &amp; Date of Birth</strong></div>
+                            <div class="item-data">
+                                <span class="text-capitalize">{{ auth()->user()->gender ? str_replace('_', ' ', auth()->user()->gender) : 'Not specified' }}</span>
+                                @if(auth()->user() && auth()->user()->dob)
+                                    <span class="text-muted ms-2">({{ auth()->user()->dob->format('M d, Y') }})</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item border-bottom py-3">
+                    <div class="row justify-content-between align-items-center">
+                        <div class="col-auto">
+                            <div class="item-label"><strong>About / Bio</strong></div>
+                            <div class="item-data text-muted">{{ auth()->user()->about ?? ($author->bio ?? 'Passionate writer covering modern technologies and ideas.') }}</div>
                         </div>
                     </div>
                 </div>

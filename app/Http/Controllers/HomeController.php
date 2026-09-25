@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Author;
+use App\Models\HomeSetting;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -16,53 +17,50 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // Hero / Featured article
-        $heroArticle = Article::with(['category', 'author'])
-            ->where('is_featured', true)
-            ->latest('published_at')
-            ->first();
+        // 1. Home Settings (Hero text & promo configured from Dashboard)
+        $homeSetting = HomeSetting::with(['featuredArticle.category', 'featuredArticle.author'])->first();
 
-        if (!$heroArticle) {
+        // Hero / Featured article
+        $heroArticle = null;
+        if ($homeSetting && $homeSetting->featured_article_id && $homeSetting->featuredArticle) {
+            $heroArticle = $homeSetting->featuredArticle;
+        } else {
             $heroArticle = Article::with(['category', 'author'])
-                ->orderBy('views_count', 'desc')
+                ->where('is_featured', true)
+                ->latest('published_at')
                 ->first();
+
+            if (!$heroArticle) {
+                $heroArticle = Article::with(['category', 'author'])
+                    ->latest()
+                    ->first();
+            }
         }
 
         $excludedIds = $heroArticle ? [$heroArticle->id] : [];
 
-        // Trending articles (top engagement)
+        // 2. Trending articles (Strictly articles marked is_trending from Dashboard)
         $trendingArticles = Article::with(['category', 'author'])
             ->whereNotIn('id', $excludedIds)
             ->where('is_trending', true)
             ->latest('published_at')
-            ->take(4)
+            ->take(8)
             ->get();
 
-        if ($trendingArticles->count() < 4) {
-            $additionalTrending = Article::with(['category', 'author'])
-                ->whereNotIn('id', array_merge($excludedIds, $trendingArticles->pluck('id')->toArray()))
-                ->orderBy('views_count', 'desc')
-                ->take(4 - $trendingArticles->count())
-                ->get();
-            $trendingArticles = $trendingArticles->merge($additionalTrending);
-        }
-
-        $excludedIds = array_merge($excludedIds, $trendingArticles->pluck('id')->toArray());
-
-        // Latest published articles for main section grid
+        // 3. Latest published articles for main section grid
         $latestArticles = Article::with(['category', 'author'])
             ->whereNotIn('id', $excludedIds)
             ->latest('published_at')
             ->take(6)
             ->get();
 
-        // Categories with count
+        // 4. Categories with article count
         $categories = Category::withCount('articles')->get();
 
-        // Top authors with count
+        // 5. Authors with article count
         $featuredAuthors = Author::withCount('articles')
             ->orderBy('articles_count', 'desc')
-            ->take(4)
+            ->take(8)
             ->get();
 
         // Stats counter
@@ -73,7 +71,8 @@ class HomeController extends Controller
             'total_categories' => Category::count(),
         ];
 
-        return view('home', compact(
+        return view('Frontend.home', compact(
+            'homeSetting',
             'heroArticle',
             'trendingArticles',
             'latestArticles',

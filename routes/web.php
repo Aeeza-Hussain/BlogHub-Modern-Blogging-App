@@ -65,6 +65,16 @@ Route::middleware('auth')->group(function () {
             Route::get('/settings', [DashboardController::class, 'settings'])->name('dashboard.settings');
             Route::get('/notifications', [DashboardController::class, 'notifications'])->name('dashboard.notifications');
             Route::get('/help', [DashboardController::class, 'help'])->name('dashboard.help');
+            Route::get('/website', [DashboardController::class, 'website'])->name('dashboard.website');
+            Route::get('/website/{section}', [DashboardController::class, 'websiteSection'])->name('dashboard.website.section');
+            Route::post('/website/hero', [DashboardController::class, 'updateHeroSettings'])->name('dashboard.website.hero.update');
+            Route::post('/website/trending/{id}/toggle', [DashboardController::class, 'toggleTrending'])->name('dashboard.website.trending.toggle');
+            Route::post('/website/categories', [DashboardController::class, 'storeCategory'])->name('dashboard.website.categories.store');
+            Route::put('/website/categories/{id}', [DashboardController::class, 'updateCategory'])->name('dashboard.website.categories.update');
+            Route::delete('/website/categories/{id}', [DashboardController::class, 'deleteCategory'])->name('dashboard.website.categories.delete');
+            Route::post('/website/authors', [DashboardController::class, 'storeAuthor'])->name('dashboard.website.authors.store');
+            Route::put('/website/authors/{id}', [DashboardController::class, 'updateAuthor'])->name('dashboard.website.authors.update');
+            Route::delete('/website/authors/{id}', [DashboardController::class, 'deleteAuthor'])->name('dashboard.website.authors.delete');
         });
 });
 

@@ -10,13 +10,13 @@
     <div class="row align-items-center justify-content-between g-4">
       <div class="col-lg-7">
         <span class="bh-badge bh-badge-coral mb-3">
-          <i class="fas fa-sparkles me-1"></i> Premier Content Hub
+          <i class="fas fa-sparkles me-1"></i> {{ $homeSetting->hero_badge ?? 'Premier Content Hub' }}
         </span>
         <h1 class="font-heading fw-bold display-4 mb-3" style="line-height: 1.15;">
-          Discover Thoughtful Stories & Expert Perspectives
+          {{ $homeSetting->hero_heading ?? 'Discover Thoughtful Stories & Expert Perspectives' }}
         </h1>
         <p class="text-muted fs-5 mb-4 pe-lg-4">
-          Explore curated articles on technology, design, science, business, and culture. Written by passionate creators and industry experts.
+          {{ $homeSetting->hero_description ?? 'Explore curated articles on technology, design, science, business, and culture. Written by passionate creators and industry experts.' }}
         </p>
 
         <!-- Search Bar -->
@@ -53,16 +53,16 @@
               <i class="fas fa-feather-alt fs-3"></i>
             </div>
             <div>
-              <h5 class="font-heading fw-bold mb-0">Share Your Knowledge</h5>
-              <small class="text-muted">Join 10,000+ creators on BlogHub</small>
+              <h5 class="font-heading fw-bold mb-0">{{ $homeSetting->promo_heading ?? 'Share Your Knowledge' }}</h5>
+              <small class="text-muted">{{ $homeSetting->promo_subheading ?? 'Join 10,000+ creators on BlogHub' }}</small>
             </div>
           </div>
           <p class="text-muted small mb-4">
-            Publish your articles, connect with readers, and grow your audience with our powerful blogging platform tools.
+            {{ $homeSetting->promo_description ?? 'Publish your articles, connect with readers, and grow your audience with our powerful blogging platform tools.' }}
           </p>
           <div class="d-flex gap-2">
-            <a href="{{ route('blogs.create') }}" class="btn btn-bh-primary flex-grow-1">
-              <i class="fas fa-pen-nib me-1"></i> Write Article
+            <a href="{{ $homeSetting->promo_btn_url ?? route('blogs.create') }}" class="btn btn-bh-primary flex-grow-1">
+              <i class="fas fa-pen-nib me-1"></i> {{ $homeSetting->promo_btn_text ?? 'Write Article' }}
             </a>
             <a href="{{ route('blogs.index') }}" class="btn btn-bh-outline">
               Explore All
@@ -143,7 +143,7 @@
 
 <!-- Trending Stories Section -->
 @if(isset($trendingArticles) && $trendingArticles->count() > 0)
-<section class="py-5 bg-light-subtle border-top border-bottom">
+<section id="trending" class="py-5 bg-light-subtle border-top border-bottom">
   <div class="container">
     <div class="d-flex align-items-center justify-content-between mb-4">
       <div>
@@ -170,7 +170,7 @@
 
 <!-- Category Showcase Section -->
 @if(isset($categories) && $categories->count() > 0)
-<section class="py-5">
+<section id="topics" class="py-5">
   <div class="container">
     <div class="d-flex align-items-center justify-content-between mb-4">
       <div>
@@ -195,7 +195,7 @@
 
 <!-- Latest Articles Grid -->
 @if(isset($latestArticles) && $latestArticles->count() > 0)
-<section class="py-5 bg-light-subtle border-top">
+<section id="latest" class="py-5 bg-light-subtle border-top">
   <div class="container">
     <div class="d-flex align-items-center justify-content-between mb-4">
       <div>
@@ -226,7 +226,7 @@
 
 <!-- Featured Authors Section -->
 @if(isset($featuredAuthors) && $featuredAuthors->count() > 0)
-<section class="py-5">
+<section id="authors" class="py-5">
   <div class="container">
     <div class="d-flex align-items-center justify-content-between mb-4">
       <div>

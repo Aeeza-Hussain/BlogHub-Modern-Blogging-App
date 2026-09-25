@@ -25,11 +25,30 @@ class LoginController extends Controller
      *
      * @var string
      */
+     protected function authenticated(Request $request, $user)
+    {
+        if($user->user-type == 1)
+            {
+                return "Hello Admin";
+
+            }
+
+            elseif($user->user-type == 2)
+
+                {
+                    return" Hello Auther";
+                }
+                else
+                    {
+                        return "Good Bye";
+                    }
+    }
+
     protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
-     *
+     
      * @return void
      */
     public function __construct()
