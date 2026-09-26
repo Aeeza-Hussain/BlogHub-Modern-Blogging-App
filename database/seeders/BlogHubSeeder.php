@@ -18,12 +18,17 @@ class BlogHubSeeder extends Seeder
         // 0. Create Default Demo Users
         User::firstOrCreate(
             ['email' => 'aleezeh16@gmail.com'],
-            ['name' => 'Aleeza Fatima', 'password' => Hash::make('password')]
+            ['name' => 'Aleeza Fatima', 'password' => Hash::make('password'), 'user_type' => 1]
         );
 
         User::firstOrCreate(
             ['email' => 'admin@bloghub.com'],
-            ['name' => 'BlogHub Admin', 'password' => Hash::make('password')]
+            ['name' => 'BlogHub Admin', 'password' => Hash::make('password'), 'user_type' => 1]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'author@bloghub.com'],
+            ['name' => 'Sarah Author', 'password' => Hash::make('password'), 'user_type' => 2]
         );
 
         // 1. Create 10 Categories

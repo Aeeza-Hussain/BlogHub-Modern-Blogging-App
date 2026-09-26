@@ -6,10 +6,10 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class admin
+class CanPublishArticles
 {
     /**
-     * Restrict a route to administrator accounts (user_type === 1).
+     * Allow admins and authors through, since both publish to the blog.
      *
      * @param  Closure(Request): (Response)  $next
      */
@@ -21,8 +21,8 @@ class admin
             return redirect()->guest(route('login'));
         }
 
-        if (!$user->isAdmin()) {
-            abort(403, 'Administrator access is required for this area.');
+        if (!$user->canPublish()) {
+            abort(403, 'Your account is not approved to publish articles yet.');
         }
 
         return $next($request);

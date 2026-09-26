@@ -6,7 +6,7 @@
     <img src="{{ $article->featured_image }}" alt="{{ $article->title }}" loading="lazy">
     <div class="position-absolute top-0 start-0 m-3">
       <span class="bh-badge bh-badge-coral shadow-sm">
-        <i class="fas {{ $article->category->icon ?? 'fa-folder' }}"></i> {{ $article->category->name }}
+        <i class="fas {{ $article->category?->icon ?? 'fa-folder' }}"></i> {{ $article->category?->name ?? 'Uncategorised' }}
       </span>
     </div>
     <button type="button" class="btn btn-sm btn-light rounded-circle position-absolute top-0 end-0 m-3 shadow-sm btn-bookmark-toggle" aria-label="Save bookmark">
@@ -34,13 +34,17 @@
 
     <!-- Author & Stats Footer -->
     <div class="border-top pt-3 mt-auto d-flex align-items-center justify-content-between">
-      <a href="{{ route('authors.show', $article->author->slug) }}" class="d-flex align-items-center gap-2 text-decoration-none text-reset">
-        <img src="{{ $article->author->avatar }}" alt="{{ $article->author->name }}" class="rounded-circle" style="width: 34px; height: 34px; object-fit: cover;">
-        <div>
-          <h6 class="mb-0 small fw-bold font-heading">{{ $article->author->name }}</h6>
-          <span class="text-muted font-mono" style="font-size: 0.72rem;">{{ $article->author->specialty }}</span>
-        </div>
-      </a>
+      @if($article->author)
+        <a href="{{ route('authors.show', $article->author->slug) }}" class="d-flex align-items-center gap-2 text-decoration-none text-reset">
+          <img src="{{ $article->author->avatar }}" alt="{{ $article->author->name }}" class="rounded-circle" style="width: 34px; height: 34px; object-fit: cover;">
+          <div>
+            <h6 class="mb-0 small fw-bold font-heading">{{ $article->author->name }}</h6>
+            <span class="text-muted font-mono" style="font-size: 0.72rem;">{{ $article->author->specialty }}</span>
+          </div>
+        </a>
+      @else
+        <span class="text-muted small font-mono">Unassigned</span>
+      @endif
 
       <div class="d-flex align-items-center gap-3 text-muted small font-mono">
         <button type="button" class="btn btn-link text-decoration-none p-0 text-muted btn-like-toggle" aria-label="Like article">

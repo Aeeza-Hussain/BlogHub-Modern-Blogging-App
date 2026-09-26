@@ -199,6 +199,7 @@ class AuthController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'user_type' => 2,
             'contact' => $validated['contact'] ?? null,
             'gender' => $validated['gender'] ?? null,
             'dob' => $validated['dob'] ?? null,
@@ -207,17 +208,9 @@ class AuthController extends Controller
             'image' => $imagePath,
         ]);
 
-        // Automatically prepare author profile so user is ready to publish articles
-        Author::firstOrCreate(
-            ['name' => $user->name],
-            [
-                'slug' => Str::slug($user->name . '-' . rand(100, 999)),
-                'avatar' => $user->avatar_url,
-                'tagline' => $user->niche ? ($user->niche . ' Contributor') : 'BlogHub Author',
-                'bio' => $user->about ?: 'Contributing author on BlogHub passionate about sharing insights and perspectives.',
-                'specialty' => $user->niche ?: 'General Topics',
-            ]
-        );
+        // Automatically prepare the public author profile so the user can publish.
+        // This is linked by user_id, which is what articles.author_id resolves against.
+        $user->ensureAuthorProfile();
 
         Auth::login($user);
         $request->session()->regenerate();

@@ -31,7 +31,8 @@
     box-shadow: 0 20px 45px -12px rgba(15, 23, 42, 0.1);
     overflow: hidden;
     width: 100%;
-    max-width: 1100px;
+    max-width: 820px;
+    margin: 0 auto;
   }
 
   [data-theme="dark"] .bh-reg-card {
@@ -502,113 +503,7 @@
 @section('content')
 <div class="bh-reg-wrapper">
   <div class="bh-reg-card">
-    <div class="row g-0">
-      
-      <!-- ==============================================
-           LEFT PANEL: Editorial Niche Showcase & Creator Studio
-           ============================================== -->
-      <div class="col-lg-4 d-none d-lg-flex bh-reg-sidebar">
-        <div>
-          <!-- Header Badge -->
-          <div class="bh-reg-badge mb-3">
-            <i class="fa-solid fa-feather-pointed text-warning"></i>
-            <span>CREATOR NETWORK</span>
-          </div>
-
-          <h3 class="fw-bold text-white mb-2" style="font-size: 1.7rem; letter-spacing: -0.02em; line-height: 1.25;">
-            Where Modern Voices Build Their Legacy.
-          </h3>
-          <p class="text-white-50 small mb-3">
-            Join thousands of writers sharing stories across the world's most vibrant topics:
-          </p>
-
-          <!-- Featured Niche Showcase Cards -->
-          <div class="bh-niche-showcase-list">
-            <!-- 1. AI -->
-            <div class="bh-niche-showcase-card">
-              <span class="bh-nsc-icon" style="background: linear-gradient(135deg, #7C3AED, #9333EA);">
-                <i class="fa-solid fa-brain"></i>
-              </span>
-              <div>
-                <span class="bh-nsc-title">Artificial Intelligence</span>
-                <span class="bh-nsc-sub">Machine learning &amp; neural tech</span>
-              </div>
-              <span class="bh-nsc-pill hot">Trending</span>
-            </div>
-
-            <!-- 2. Tech -->
-            <div class="bh-niche-showcase-card">
-              <span class="bh-nsc-icon" style="background: linear-gradient(135deg, #2563EB, #3B82F6);">
-                <i class="fa-solid fa-laptop-code"></i>
-              </span>
-              <div>
-                <span class="bh-nsc-title">Technology &amp; Code</span>
-                <span class="bh-nsc-sub">Software engineering &amp; cloud</span>
-              </div>
-              <span class="bh-nsc-pill">Popular</span>
-            </div>
-
-            <!-- 3. Cooking -->
-            <div class="bh-niche-showcase-card">
-              <span class="bh-nsc-icon" style="background: linear-gradient(135deg, #D97706, #F59E0B);">
-                <i class="fa-solid fa-utensils"></i>
-              </span>
-              <div>
-                <span class="bh-nsc-title">Food &amp; Cooking</span>
-                <span class="bh-nsc-sub">Culinary arts &amp; recipes</span>
-              </div>
-            </div>
-
-            <!-- 4. Sports -->
-            <div class="bh-niche-showcase-card">
-              <span class="bh-nsc-icon" style="background: linear-gradient(135deg, #DC2626, #EF4444);">
-                <i class="fa-solid fa-futbol"></i>
-              </span>
-              <div>
-                <span class="bh-nsc-title">Sports &amp; Fitness</span>
-                <span class="bh-nsc-sub">Athletics &amp; active wellness</span>
-              </div>
-            </div>
-
-            <!-- 5. Fashion -->
-            <div class="bh-niche-showcase-card">
-              <span class="bh-nsc-icon" style="background: linear-gradient(135deg, #DB2777, #EC4899);">
-                <i class="fa-solid fa-shirt"></i>
-              </span>
-              <div>
-                <span class="bh-nsc-title">Fashion &amp; Style</span>
-                <span class="bh-nsc-sub">Runway trends &amp; aesthetics</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Community Trust Card at Bottom -->
-        <div class="bh-community-trust mt-3">
-          <div class="d-flex align-items-center justify-content-between mb-2">
-            <div class="bh-avatar-stack">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80" alt="Author">
-              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80" alt="Author">
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&auto=format&fit=crop&q=80" alt="Author">
-            </div>
-            <div class="text-warning small" style="font-size: 0.72rem;">
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-            </div>
-          </div>
-          <p class="text-white-50 small mb-0" style="font-size: 0.78rem; line-height: 1.4;">
-            Join over <strong>15,000+</strong> writers and reach millions of monthly readers on BlogHub.
-          </p>
-        </div>
-      </div>
-
-      <!-- ==============================================
-           RIGHT PANEL: Streamlined Registration Form
-           ============================================== -->
-      <div class="col-12 col-lg-8 bh-reg-main">
+    <div class="p-4 p-md-5">
         
         <!-- Header -->
         <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom">
@@ -623,7 +518,7 @@
         </div>
 
         <!-- Error Notifications -->
-        @if ($errors->any())
+        @if (isset($errors) && $errors->any())
           <div class="alert alert-danger border-0 rounded-3 shadow-sm mb-4 p-3" role="alert">
             <div class="d-flex align-items-center gap-2 fw-semibold mb-1">
               <i class="fa-solid fa-circle-exclamation text-danger"></i>
@@ -928,8 +823,6 @@
             <a href="{{ route('login') }}" class="fw-bold text-accent text-decoration-none">Sign In</a>
           </p>
         </div>
-
-      </div>
 
     </div>
   </div>

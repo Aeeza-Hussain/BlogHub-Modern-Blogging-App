@@ -72,6 +72,13 @@ class DashboardController extends Controller
     public function deleteArticle($id)
     {
         $article = Article::findOrFail($id);
+        $user = request()->user();
+
+        // Authors may only remove their own posts; admins may remove any.
+        if (!$user->isAdmin() && $article->author_id !== $user->ensureAuthorProfile()->id) {
+            abort(403, 'You can only delete your own articles.');
+        }
+
         $article->delete();
 
         return redirect()->route('dashboard.articles')->with('success', 'Article deleted successfully!');
@@ -90,7 +97,7 @@ class DashboardController extends Controller
 
     public function account()
     {
-        $author = Author::first();
+        $author = request()->user()->ensureAuthorProfile();
         return view('backend.account', compact('author'));
     }
 

@@ -1,19 +1,18 @@
-<!-- Professional Dashboard Sidebar Component -->
 <style>
 /* ========================================================
-   BlogHub Premium Professional Sidebar Styles
+   BlogHub Decent & Professional Sidebar Styles
    ======================================================== */
 .app-sidepanel {
-    background: #0d121d !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.07) !important;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25) !important;
+    background: #ffffff !important;
+    border-right: 1px solid #e2e8f0 !important;
+    box-shadow: 2px 0 16px rgba(0, 0, 0, 0.04) !important;
     z-index: 1040 !important;
     font-family: inherit;
 }
 
 .app-sidepanel .sidepanel-inner {
-    background: #0d121d !important;
-    color: #94a3b8;
+    background: #ffffff !important;
+    color: #475569;
     width: 250px !important;
     display: flex;
     flex-direction: column;
@@ -24,8 +23,8 @@
 /* Sidebar Brand Header */
 .sidebar-brand-box {
     padding: 1.25rem 1.25rem 1rem 1.25rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%);
+    border-bottom: 1px solid #f1f5f9;
+    background: #ffffff;
 }
 
 .sidebar-logo-icon {
@@ -38,7 +37,7 @@
     justify-content: center;
     color: #ffffff;
     font-size: 1.15rem;
-    box-shadow: 0 4px 12px rgba(200, 70, 31, 0.35);
+    box-shadow: 0 4px 12px rgba(200, 70, 31, 0.25);
     transition: transform 0.25s ease;
 }
 
@@ -47,9 +46,9 @@
 }
 
 .sidebar-brand-title {
-    font-size: 1.25rem;
+    font-size: 1.22rem;
     font-weight: 800;
-    color: #ffffff;
+    color: #0f172a;
     letter-spacing: -0.3px;
     line-height: 1.2;
 }
@@ -59,27 +58,33 @@
     font-weight: 700;
     padding: 2px 6px;
     border-radius: 4px;
-    background: rgba(200, 70, 31, 0.2);
-    color: #ff7a50;
-    border: 1px solid rgba(200, 70, 31, 0.3);
+    background: rgba(200, 70, 31, 0.1);
+    color: #C8461F;
+    border: 1px solid rgba(200, 70, 31, 0.2);
     letter-spacing: 0.5px;
     text-transform: uppercase;
+}
+
+.sidebar-brand-badge.badge-author {
+    background: rgba(37, 99, 235, 0.1);
+    color: #2563EB;
+    border: 1px solid rgba(37, 99, 235, 0.25);
 }
 
 /* Navigation Scroll Area */
 .sidebar-nav-container {
     flex: 1 1 auto;
     overflow-y: auto;
-    padding: 1rem 0.85rem;
+    padding: 0.85rem 0.75rem;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
 }
 
 .sidebar-nav-container::-webkit-scrollbar {
     width: 4px;
 }
 .sidebar-nav-container::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 4px;
 }
 
@@ -89,9 +94,9 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.8px;
-    color: #64748b;
+    color: #94a3b8;
     padding: 0.75rem 0.65rem 0.35rem 0.65rem;
-    margin-top: 0.5rem;
+    margin-top: 0.4rem;
 }
 
 /* Nav Link Items */
@@ -99,10 +104,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.65rem 0.85rem;
+    padding: 0.6rem 0.75rem;
     margin-bottom: 0.25rem;
     border-radius: 9px;
-    color: #94a3b8 !important;
+    color: #475569 !important;
     text-decoration: none !important;
     font-size: 0.875rem;
     font-weight: 500;
@@ -112,18 +117,18 @@
 }
 
 .sidebar-link:hover {
-    color: #f8fafc !important;
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.06);
+    color: #C8461F !important;
+    background: #fff5f2;
+    border-color: rgba(200, 70, 31, 0.12);
     transform: translateX(2px);
 }
 
 .sidebar-link.active {
-    color: #ffffff !important;
-    background: linear-gradient(90deg, rgba(200, 70, 31, 0.22) 0%, rgba(200, 70, 31, 0.08) 100%) !important;
-    border: 1px solid rgba(200, 70, 31, 0.38) !important;
+    color: #C8461F !important;
+    background: #fff1ed !important;
+    border: 1px solid rgba(200, 70, 31, 0.25) !important;
     font-weight: 600;
-    box-shadow: 0 2px 8px rgba(200, 70, 31, 0.15);
+    box-shadow: 0 2px 6px rgba(200, 70, 31, 0.08);
 }
 
 .sidebar-link.active::before {
@@ -134,8 +139,7 @@
     bottom: 6px;
     width: 3.5px;
     border-radius: 4px;
-    background: #ea580c;
-    box-shadow: 0 0 10px #ea580c;
+    background: #C8461F;
 }
 
 /* Icon Box inside Links */
@@ -147,31 +151,31 @@
     align-items: center;
     justify-content: center;
     margin-right: 0.75rem;
-    background: rgba(255, 255, 255, 0.04);
-    color: #94a3b8;
+    background: #f1f5f9;
+    color: #64748b;
     transition: all 0.2s ease;
     font-size: 0.95rem;
     flex-shrink: 0;
 }
 
 .sidebar-link:hover .sidebar-icon-wrap {
-    color: #f1f5f9;
-    background: rgba(255, 255, 255, 0.09);
+    color: #C8461F;
+    background: #ffe6de;
 }
 
 .sidebar-link.active .sidebar-icon-wrap {
-    background: #c8461f !important;
+    background: #C8461F !important;
     color: #ffffff !important;
-    box-shadow: 0 2px 8px rgba(200, 70, 31, 0.4);
+    box-shadow: 0 2px 6px rgba(200, 70, 31, 0.25);
 }
 
 /* Submenu Styling */
 .sidebar-submenu {
-    padding-left: 1.25rem;
+    padding-left: 1.15rem;
     margin-top: 0.25rem;
     margin-bottom: 0.5rem;
-    border-left: 1px dashed rgba(255, 255, 255, 0.12);
-    margin-left: 1.45rem;
+    border-left: 1.5px dashed #e2e8f0;
+    margin-left: 1.35rem;
 }
 
 .sidebar-sublink {
@@ -181,46 +185,47 @@
     padding: 0.45rem 0.65rem;
     margin-bottom: 0.15rem;
     border-radius: 6px;
-    color: #94a3b8 !important;
+    color: #64748b !important;
     text-decoration: none !important;
     font-size: 0.8125rem;
+    font-weight: 500;
     transition: all 0.18s ease;
     position: relative;
 }
 
 .sidebar-sublink:hover {
-    color: #ffffff !important;
-    background: rgba(255, 255, 255, 0.04);
+    color: #C8461F !important;
+    background: #fff5f2;
     transform: translateX(3px);
 }
 
 .sidebar-sublink.active {
-    color: #ff8c66 !important;
+    color: #C8461F !important;
     font-weight: 600;
-    background: rgba(200, 70, 31, 0.12);
+    background: #fff1ed;
 }
 
 .sidebar-sublink.active i {
-    color: #ff8c66 !important;
+    color: #C8461F !important;
 }
 
 /* Chevron indicator */
 .sidebar-chevron {
     font-size: 0.75rem;
     transition: transform 0.25s ease;
-    color: #64748b;
+    color: #94a3b8;
 }
 
 .submenu-toggle[aria-expanded="true"] .sidebar-chevron {
     transform: rotate(180deg);
-    color: #f8fafc;
+    color: #C8461F;
 }
 
 /* Sidebar Footer / User Profile Area */
 .sidebar-footer-box {
     padding: 0.9rem 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(15, 23, 42, 0.85);
+    border-top: 1px solid #f1f5f9;
+    background: #f8fafc;
 }
 
 .sidebar-user-card {
@@ -234,14 +239,14 @@
     height: 38px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid rgba(200, 70, 31, 0.5);
+    border: 2px solid rgba(200, 70, 31, 0.35);
     flex-shrink: 0;
 }
 
 .sidebar-user-name {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #ffffff;
+    color: #0f172a;
     line-height: 1.2;
 }
 
@@ -251,8 +256,8 @@
 }
 
 .status-online-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     background: #10b981;
     border-radius: 50%;
     display: inline-block;
@@ -266,7 +271,7 @@
     <div class="sidepanel-inner d-flex flex-column">
         <!-- Close button for Mobile screen -->
         <a href="#" id="sidepanel-close" class="sidepanel-close d-xl-none" aria-label="Close sidebar">
-            <i class="fa-solid fa-xmark"></i>
+            <i class="fa-solid fa-xmark text-dark"></i>
         </a>
 
         <!-- Sidebar Brand / Logo Header -->
@@ -277,11 +282,15 @@
                 </div>
                 <div>
                     <div class="sidebar-brand-title font-heading">
-                        Blog<span style="color: #ff6838;">Hub</span>
+                        Blog<span style="color: #C8461F;">Hub</span>
                     </div>
                     <div class="d-flex align-items-center gap-1.5 mt-0.5">
                         <span class="status-online-dot"></span>
-                        <span class="sidebar-brand-badge">ADMIN PORTAL</span>
+                        @if((auth()->user()->user_type ?? 1) == 1)
+                            <span class="sidebar-brand-badge">ADMIN PORTAL</span>
+                        @else
+                            <span class="sidebar-brand-badge badge-author">AUTHOR STUDIO</span>
+                        @endif
                     </div>
                 </div>
             </a>
@@ -290,6 +299,9 @@
         <!-- Navigation Menu Container -->
         <nav id="app-nav-main" class="sidebar-nav-container">
             <ul class="list-unstyled mb-0" id="menu-accordion">
+
+            @if((auth()->user()->user_type ?? 1) == 1)
+                {{-- for admin --}}
 
                 <!-- 1. CORE SECTION -->
                 <li class="sidebar-section-header">
@@ -317,7 +329,7 @@
                             </span>
                             <span>All Articles</span>
                         </div>
-                        <span class="badge bg-secondary bg-opacity-25 text-light small px-1.5 py-0.5 rounded font-mono" style="font-size: 0.7rem;">Manage</span>
+                        <span class="badge bg-light text-secondary border small px-1.5 py-0.5 rounded font-mono" style="font-size: 0.7rem;">Manage</span>
                     </a>
                 </li>
 
@@ -325,12 +337,12 @@
                 <li>
                     <a class="sidebar-link {{ Route::currentRouteName() == 'blogs.create' ? 'active' : '' }}" href="{{ route('blogs.create') }}">
                         <div class="d-flex align-items-center">
-                            <span class="sidebar-icon-wrap" style="color: #ff7a50;">
+                            <span class="sidebar-icon-wrap" style="color: #C8461F;">
                                 <i class="fa-solid fa-pen-nib"></i>
                             </span>
                             <span>Write Article</span>
                         </div>
-                        <span class="badge bg-danger bg-opacity-25 text-coral small px-1.5 py-0.5 rounded font-mono" style="font-size: 0.65rem; color: #ff7a50 !important;">+ New</span>
+                        <span class="badge bg-danger bg-opacity-10 text-danger small px-1.5 py-0.5 rounded font-mono" style="font-size: 0.65rem;">+ New</span>
                     </a>
                 </li>
 
@@ -359,13 +371,13 @@
                        data-bs-target="#submenu-website" 
                        aria-expanded="{{ request()->routeIs('dashboard.website*') ? 'true' : 'false' }}">
                         <div class="d-flex align-items-center">
-                            <span class="sidebar-icon-wrap" style="color: #38bdf8;">
+                            <span class="sidebar-icon-wrap" style="color: #0284c7;">
                                 <i class="fa-solid fa-globe"></i>
                             </span>
                             <span>Website Portions</span>
                         </div>
                         <div class="d-flex align-items-center gap-1.5">
-                            <span class="badge bg-success bg-opacity-20 text-success small px-1 py-0 rounded font-mono" style="font-size: 0.65rem;">5 Sections</span>
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 small px-1 py-0 rounded font-mono" style="font-size: 0.65rem;">5 Sections</span>
                             <i class="fa-solid fa-chevron-down sidebar-chevron"></i>
                         </div>
                     </a>
@@ -385,7 +397,7 @@
                                 <span class="d-flex align-items-center">
                                     <i class="fa-solid fa-wand-magic-sparkles me-2 text-warning" style="width: 14px;"></i> 1. Discover Stories
                                 </span>
-                                <span class="badge bg-warning bg-opacity-20 text-warning px-1" style="font-size: 0.6rem;">Hero</span>
+                                <span class="badge bg-warning bg-opacity-15 text-warning border border-warning border-opacity-25 px-1" style="font-size: 0.6rem;">Hero</span>
                             </a>
 
                             <!-- 2. Trending Now -->
@@ -394,7 +406,7 @@
                                 <span class="d-flex align-items-center">
                                     <i class="fa-solid fa-fire me-2 text-danger" style="width: 14px;"></i> 2. Trending Now
                                 </span>
-                                <span class="badge bg-danger bg-opacity-20 text-danger px-1" style="font-size: 0.6rem;">Hot</span>
+                                <span class="badge bg-danger bg-opacity-15 text-danger border border-danger border-opacity-25 px-1" style="font-size: 0.6rem;">Hot</span>
                             </a>
 
                             <!-- 3. Explore Topics -->
@@ -476,6 +488,153 @@
                         </div>
                     </a>
                 </li>
+
+            @else
+                {{-- for author (user_type == 2) --}}
+
+                <!-- 1. CREATOR WORKSPACE -->
+                <li class="sidebar-section-header">
+                    Creator Studio
+                </li>
+
+                <!-- Dashboard Overview -->
+                <li>
+                    <a class="sidebar-link {{ Route::currentRouteName() == 'dashboard.index' ? 'active' : '' }}" href="{{ route('dashboard.index') }}">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-chart-pie"></i>
+                            </span>
+                            <span>Author Dashboard</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Write / New Post -->
+                <li>
+                    <a class="sidebar-link {{ Route::currentRouteName() == 'blogs.create' ? 'active' : '' }}" href="{{ route('blogs.create') }}">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap" style="color: #C8461F; background: #fff1ed;">
+                                <i class="fa-solid fa-pen-nib"></i>
+                            </span>
+                            <span>Write Article</span>
+                        </div>
+                        <span class="badge bg-danger bg-opacity-10 text-danger small px-1.5 py-0.5 rounded font-mono" style="font-size: 0.65rem;">+ New</span>
+                    </a>
+                </li>
+
+                <!-- My Articles -->
+                <li>
+                    <a class="sidebar-link {{ Route::currentRouteName() == 'dashboard.articles' ? 'active' : '' }}" href="{{ route('dashboard.articles') }}">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-newspaper"></i>
+                            </span>
+                            <span>My Articles</span>
+                        </div>
+                        <span class="badge bg-light text-secondary border small px-1.5 py-0.5 rounded font-mono" style="font-size: 0.7rem;">My Posts</span>
+                    </a>
+                </li>
+
+                <!-- Article Performance / Analytics -->
+                <li>
+                    <a class="sidebar-link {{ Route::currentRouteName() == 'dashboard.charts' ? 'active' : '' }}" href="{{ route('dashboard.charts') }}">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </span>
+                            <span>Performance &amp; Stats</span>
+                        </div>
+                        <span class="badge bg-success bg-opacity-10 text-success small px-1.5 py-0.5 rounded font-mono" style="font-size: 0.65rem;">Stats</span>
+                    </a>
+                </li>
+
+                <!-- 2. EXPLORE & COMMUNITY -->
+                <li class="sidebar-section-header mt-3">
+                    Explore &amp; Community
+                </li>
+
+                <!-- Community Stories -->
+                <li>
+                    <a class="sidebar-link" href="{{ route('blogs.index') }}" target="_blank">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap" style="color: #0284c7;">
+                                <i class="fa-solid fa-book-open-reader"></i>
+                            </span>
+                            <span>Community Stories</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-up-right-from-square small text-muted" style="font-size: 0.7rem;"></i>
+                    </a>
+                </li>
+
+                <!-- Explore Categories -->
+                <li>
+                    <a class="sidebar-link" href="{{ route('categories.index') }}" target="_blank">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap" style="color: #10b981;">
+                                <i class="fa-solid fa-shapes"></i>
+                            </span>
+                            <span>Explore Topics</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-up-right-from-square small text-muted" style="font-size: 0.7rem;"></i>
+                    </a>
+                </li>
+
+                <!-- Fellow Authors -->
+                <li>
+                    <a class="sidebar-link" href="{{ route('authors.index') }}" target="_blank">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap" style="color: #8b5cf6;">
+                                <i class="fa-solid fa-users"></i>
+                            </span>
+                            <span>Meet Authors</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-up-right-from-square small text-muted" style="font-size: 0.7rem;"></i>
+                    </a>
+                </li>
+
+                <!-- 3. ACCOUNT & SUPPORT -->
+                <li class="sidebar-section-header mt-3">
+                    Account &amp; Support
+                </li>
+
+                <!-- Notifications -->
+                <li>
+                    <a class="sidebar-link {{ Route::currentRouteName() == 'dashboard.notifications' ? 'active' : '' }}" href="{{ route('dashboard.notifications') }}">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-bell text-warning"></i>
+                            </span>
+                            <span>Notifications</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Account / Profile -->
+                <li>
+                    <a class="sidebar-link {{ Route::currentRouteName() == 'dashboard.account' ? 'active' : '' }}" href="{{ route('dashboard.account') }}">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-user-pen text-info"></i>
+                            </span>
+                            <span>Author Profile</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Author Guidelines -->
+                <li>
+                    <a class="sidebar-link {{ Route::currentRouteName() == 'dashboard.help' ? 'active' : '' }}" href="{{ route('dashboard.help') }}">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </span>
+                            <span>Author Guidelines</span>
+                        </div>
+                    </a>
+                </li>
+
+            @endif
+
             </ul>
         </nav>
         
@@ -483,20 +642,24 @@
         <div class="sidebar-footer-box">
             <div class="sidebar-user-card mb-2.5">
                 <img src="{{ auth()->user()->avatar_url ?? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100' }}" 
-                     alt="Admin Avatar" 
+                     alt="User Avatar" 
                      class="sidebar-user-avatar">
                 <div class="overflow-hidden flex-grow-1">
                     <div class="sidebar-user-name text-truncate">
-                        {{ auth()->user()->name ?? 'Administrator' }}
+                        {{ auth()->user()->name ?? 'User' }}
                     </div>
                     <div class="sidebar-user-role text-truncate">
-                        <span class="badge bg-success bg-opacity-20 text-success p-0" style="font-size: 0.65rem;">Super Admin</span>
+                        @if((auth()->user()->user_type ?? 1) == 1)
+                            <span class="badge bg-success bg-opacity-10 text-success p-0" style="font-size: 0.65rem;">Super Admin</span>
+                        @else
+                            <span class="badge bg-primary bg-opacity-10 text-primary p-0" style="font-size: 0.65rem;">Author / Creator</span>
+                        @endif
                     </div>
                 </div>
             </div>
 
             <div class="d-grid gap-1.5">
-                <a class="btn btn-sm w-100 text-white fw-semibold d-flex align-items-center justify-content-center gap-1.5" 
+                <a class="btn btn-sm w-100 text-white fw-semibold d-flex align-items-center justify-content-center gap-1.5 shadow-xs" 
                    style="background: linear-gradient(135deg, #c8461f 0%, #ea580c 100%); font-size: 0.78rem; border-radius: 7px; padding: 6px 10px;" 
                    href="{{ route('home') }}" target="_blank">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>

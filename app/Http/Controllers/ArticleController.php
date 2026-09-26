@@ -94,9 +94,14 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        $categories = Category::all();
-        $authors = Author::all();
-        return view('blogs.create', compact('categories', 'authors'));
+        $categories = Category::orderBy('name')->get();
+        $user = auth()->user();
+
+        // Admins publish on behalf of any author; authors publish as themselves.
+        $author = $user->ensureAuthorProfile();
+        $authors = $user->isAdmin() ? Author::orderBy('name')->get() : collect();
+
+        return view('blogs.create', compact('categories', 'authors', 'author'));
     }
 
     /**
@@ -104,29 +109,69 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $user = auth()->user();
+
+        $rules = [
             'title' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'author_id' => 'required|exists:authors,id',
             'excerpt' => 'required|string|max:500',
             'body' => 'required|string',
-            'featured_image' => 'nullable|url',
-            'reading_time' => 'nullable|integer|min:1',
+            'featured_image' => 'nullable|url|max:2048',
+            'reading_time' => 'nullable|integer|min:1|max:60',
+        ];
+
+        // Only admins may post under someone else's byline.
+        if ($user->isAdmin()) {
+            $rules['author_id'] = 'nullable|exists:authors,id';
+        }
+
+        $validated = $request->validate($rules, [
+            'category_id.required' => 'Please choose a category for your article.',
+            'category_id.exists' => 'The selected category no longer exists.',
+            'excerpt.required' => 'Please add a short summary so the post looks good in listings.',
+            'body.required' => 'The article body cannot be empty.',
+            'featured_image.url' => 'The cover image must be a valid image URL.',
         ]);
+
+        // articles.author_id is a foreign key to authors.id, so it must be the
+        // author profile id, never the users table id.
+        if ($user->isAdmin() && !empty($validated['author_id'])) {
+            $author = Author::findOrFail($validated['author_id']);
+        } else {
+            $author = $user->ensureAuthorProfile();
+        }
 
         $article = new Article();
         $article->title = $validated['title'];
-        $article->slug = Str::slug($validated['title']) . '-' . rand(100, 999);
+        $article->slug = $this->uniqueSlug($validated['title']);
         $article->category_id = $validated['category_id'];
-        $article->author_id = $validated['author_id'];
+        $article->author_id = $author->id;
         $article->excerpt = $validated['excerpt'];
         $article->body = $validated['body'];
         $article->featured_image = $validated['featured_image'] ?? 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=80';
         $article->reading_time = $validated['reading_time'] ?? 5;
+        $article->views_count = 0;
+        $article->likes_count = 0;
         $article->published_at = now();
         $article->save();
 
         return redirect()->route('blogs.show', $article->slug)->with('success', 'Article published successfully!');
+    }
+
+    /**
+     * Build a slug that is guaranteed not to collide with an existing article.
+     */
+    protected function uniqueSlug(string $title): string
+    {
+        $base = Str::slug($title) ?: 'article';
+        $slug = $base;
+        $i = 1;
+
+        while (Article::where('slug', $slug)->exists()) {
+            $slug = $base . '-' . (++$i);
+        }
+
+        return $slug;
     }
 
     /**

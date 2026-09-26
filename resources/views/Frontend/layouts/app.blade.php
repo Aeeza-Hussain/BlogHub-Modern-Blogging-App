@@ -58,6 +58,25 @@
             </div>
         @endif
 
+        @if($errors->any())
+            <div class="container mt-3">
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0" role="alert">
+                    <div class="d-flex align-items-start gap-2">
+                        <i class="fas fa-exclamation-circle fs-5 text-danger mt-1"></i>
+                        <div>
+                            <strong class="d-block mb-1">Something needs your attention</strong>
+                            <ul class="mb-0 small ps-3">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
+
         @yield('content')
     </main>
 
