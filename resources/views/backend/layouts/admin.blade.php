@@ -149,7 +149,14 @@
 	    
 	    <footer class="app-footer">
 		    <div class="container text-center py-3">
-                <small class="copyright">&copy; {{ date('Y') }} BlogHub Admin Panel. Built with Bootstrap 5 &amp; Laravel.</small>
+                <small class="copyright">
+                    &copy; {{ date('Y') }} 
+                    @if((auth()->user()->user_type ?? 1) == 1)
+                        BlogHub Admin Panel. Built with Bootstrap 5 &amp; Laravel.
+                    @else
+                        BlogHub Author Studio.
+                    @endif
+                </small>
 		    </div>
 	    </footer>
     </div>

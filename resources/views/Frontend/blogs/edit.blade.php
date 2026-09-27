@@ -11,8 +11,8 @@
           <div class="d-flex align-items-center gap-2 mb-3">
             <span class="bh-badge bh-badge-coral"><i class="fas fa-edit"></i> Article Editor</span>
           </div>
-          <h1 class="font-heading fw-bold display-6 mb-2">Create New Article</h1>
-          <p class="text-muted mb-4">Publish long-form articles, stories, or technical tutorials to the BlogHub platform.</p>
+          <h1 class="font-heading fw-bold display-6 mb-2">Edit Article</h1>
+          <p class="text-muted mb-4">Update your article details and content.</p>
 
           @if($errors->any())
             <div class="alert alert-danger border-0 shadow-sm mb-4" role="alert">
@@ -25,12 +25,13 @@
             </div>
           @endif
 
-          <form action="{{ route('blogs.store') }}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+          <form action="{{ route('blogs.update', $article->id) }}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
             @csrf
+            @method('PUT')
 
             <div class="mb-4">
               <label for="title" class="form-label font-mono fw-semibold">Article Title</label>
-              <input type="text" name="title" id="title" value="{{ old('title') }}" class="form-control form-control-lg @error('title') is-invalid @enderror" placeholder="e.g. Mastering Design Systems with Modern CSS" required>
+              <input type="text" name="title" id="title" value="{{ old('title', $article->title) }}" class="form-control form-control-lg @error('title') is-invalid @enderror" placeholder="e.g. Mastering Design Systems with Modern CSS" required>
               @error('title') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
               <div class="invalid-feedback">Article title is required.</div>
             </div>
@@ -41,7 +42,7 @@
                 <select name="category_id" id="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
                   <option value="">Select Category</option>
                   @foreach($categories as $category)
-                    <option value="{{ $category->id }}" @selected(old('category_id', $category->id) == $category->id)>
+                    <option value="{{ $category->id }}" @selected(old('category_id', $article->category_id) == $category->id)>
                       {{ $category->name }}
                     </option>
                   @endforeach
@@ -57,7 +58,7 @@
                   <select name="author_id" id="author_id" class="form-select @error('author_id') is-invalid @enderror">
                     <option value="">{{ $author->name }} (publishing as yourself)</option>
                     @foreach($authors as $option)
-                      <option value="{{ $option->id }}" @selected(old('author_id') == $option->id)>
+                      <option value="{{ $option->id }}" @selected(old('author_id', $article->author_id) == $option->id)>
                         {{ $option->name }} ({{ $option->specialty }})
                       </option>
                     @endforeach
@@ -92,14 +93,14 @@
 
             <div class="mb-4">
               <label for="excerpt" class="form-label font-mono fw-semibold">Short Excerpt / Summary</label>
-              <textarea name="excerpt" id="excerpt" rows="2" maxlength="500" class="form-control @error('excerpt') is-invalid @enderror" placeholder="Brief 1-2 sentence summary that appears on blog cards..." required>{{ old('excerpt') }}</textarea>
+              <textarea name="excerpt" id="excerpt" rows="2" maxlength="500" class="form-control @error('excerpt') is-invalid @enderror" placeholder="Brief 1-2 sentence summary that appears on blog cards..." required>{{ old('excerpt', $article->excerpt) }}</textarea>
               @error('excerpt') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
               <div class="invalid-feedback">Short excerpt is required.</div>
             </div>
 
             <div class="mb-4">
               <label for="body" class="form-label font-mono fw-semibold">Full Article Body (HTML Supported)</label>
-              <textarea name="body" id="body" rows="10" class="form-control @error('body') is-invalid @enderror" placeholder="<p>Write your detailed article body here...</p>" required>{{ old('body') }}</textarea>
+              <textarea name="body" id="body" rows="10" class="form-control @error('body') is-invalid @enderror" placeholder="<p>Write your detailed article body here...</p>" required>{{ old('body', $article->body) }}</textarea>
               @error('body') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
               <div class="invalid-feedback">Article body content is required.</div>
             </div>
@@ -107,12 +108,12 @@
             <div class="row align-items-center">
               <div class="col-md-6 mb-3 mb-md-0">
                 <label for="reading_time" class="form-label font-mono fw-semibold">Estimated Reading Time (Minutes)</label>
-                <input type="number" name="reading_time" id="reading_time" value="{{ old('reading_time', 5) }}" class="form-control @error('reading_time') is-invalid @enderror" min="1" max="60">
+                <input type="number" name="reading_time" id="reading_time" value="{{ old('reading_time', $article->reading_time) }}" class="form-control @error('reading_time') is-invalid @enderror" min="1" max="60">
                 @error('reading_time') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
               </div>
               <div class="col-md-6 text-end">
                 <button type="submit" class="btn btn-bh-accent btn-lg w-100 w-md-auto">
-                  <i class="fas fa-paper-plane me-2"></i> Publish Article
+                  <i class="fas fa-save me-2"></i> Update Article
                 </button>
               </div>
             </div>

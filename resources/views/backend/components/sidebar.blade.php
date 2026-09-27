@@ -303,7 +303,7 @@
             @if((auth()->user()->user_type ?? 1) == 1)
                 {{-- for admin --}}
 
-                <!-- 1. CORE SECTION -->
+                <!-- 1. CORE DASHBOARD -->
                 <li class="sidebar-section-header">
                     Core Dashboard
                 </li>
@@ -327,26 +327,12 @@
                             <span class="sidebar-icon-wrap">
                                 <i class="fa-solid fa-newspaper"></i>
                             </span>
-                            <span>All Articles</span>
+                            <span>Articles</span>
                         </div>
-                        <span class="badge bg-light text-secondary border small px-1.5 py-0.5 rounded font-mono" style="font-size: 0.7rem;">Manage</span>
                     </a>
                 </li>
 
-                <!-- Write / Create Article -->
-                <li>
-                    <a class="sidebar-link {{ Route::currentRouteName() == 'blogs.create' ? 'active' : '' }}" href="{{ route('blogs.create') }}">
-                        <div class="d-flex align-items-center">
-                            <span class="sidebar-icon-wrap" style="color: #C8461F;">
-                                <i class="fa-solid fa-pen-nib"></i>
-                            </span>
-                            <span>Write Article</span>
-                        </div>
-                        <span class="badge bg-danger bg-opacity-10 text-danger small px-1.5 py-0.5 rounded font-mono" style="font-size: 0.65rem;">+ New</span>
-                    </a>
-                </li>
-
-                <!-- Analytics / Charts -->
+                <!-- Analytics & Stats -->
                 <li>
                     <a class="sidebar-link {{ Route::currentRouteName() == 'dashboard.charts' ? 'active' : '' }}" href="{{ route('dashboard.charts') }}">
                         <div class="d-flex align-items-center">
@@ -358,9 +344,80 @@
                     </a>
                 </li>
 
-                <!-- 2. WEBSITE & HOMEPAGE MANAGER -->
+                <!-- 2. CONTENT MANAGEMENT -->
                 <li class="sidebar-section-header mt-3">
-                    Website &amp; Portions
+                    Content Management
+                </li>
+
+                <!-- Categories -->
+                <li>
+                    <a class="sidebar-link {{ request()->is('dashboard/website/topics') ? 'active' : '' }}" href="{{ route('dashboard.website.section', 'topics') }}">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-shapes"></i>
+                            </span>
+                            <span>Categories</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Article Reviews -->
+                <li>
+                    <a class="sidebar-link" href="#">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-clipboard-check"></i>
+                            </span>
+                            <span>Article Reviews</span>
+                        </div>
+                        <span class="badge bg-warning text-dark small px-1.5 py-0.5 rounded font-mono" style="font-size: 0.65rem;">Pending</span>
+                    </a>
+                </li>
+
+                <!-- Comments -->
+                <li>
+                    <a class="sidebar-link" href="#">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-comments"></i>
+                            </span>
+                            <span>Comments</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- 3. USER MANAGEMENT -->
+                <li class="sidebar-section-header mt-3">
+                    User Management
+                </li>
+
+                <!-- Authors -->
+                <li>
+                    <a class="sidebar-link" href="#">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-user-pen"></i>
+                            </span>
+                            <span>Authors</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Users -->
+                <li>
+                    <a class="sidebar-link" href="#">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-users"></i>
+                            </span>
+                            <span>Users</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- 4. WEBSITE & CONTENT -->
+                <li class="sidebar-section-header mt-3">
+                    Website &amp; Content
                 </li>
 
                 <!-- Website Home Portions Dropdown -->
@@ -436,48 +493,36 @@
                     </div>
                 </li>
 
-                <!-- 3. SYSTEM & SETTINGS -->
+                <!-- 5. SYSTEM & SUPPORT -->
                 <li class="sidebar-section-header mt-3">
-                    Management &amp; Settings
+                    System &amp; Support
                 </li>
 
-                <!-- Account & Settings Dropdown -->
-                <li class="has-submenu">
-                    <a class="sidebar-link submenu-toggle {{ in_array(Route::currentRouteName(), ['dashboard.notifications', 'dashboard.account', 'dashboard.settings']) ? 'active' : '' }}" 
-                       href="#" 
-                       data-bs-toggle="collapse" 
-                       data-bs-target="#submenu-account" 
-                       aria-expanded="{{ in_array(Route::currentRouteName(), ['dashboard.notifications', 'dashboard.account', 'dashboard.settings']) ? 'true' : 'false' }}">
+                <!-- Notifications -->
+                <li>
+                    <a class="sidebar-link {{ Route::currentRouteName() == 'dashboard.notifications' ? 'active' : '' }}" href="{{ route('dashboard.notifications') }}">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-bell"></i>
+                            </span>
+                            <span>Notifications</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- System Settings -->
+                <li>
+                    <a class="sidebar-link {{ Route::currentRouteName() == 'dashboard.settings' ? 'active' : '' }}" href="{{ route('dashboard.settings') }}">
                         <div class="d-flex align-items-center">
                             <span class="sidebar-icon-wrap">
                                 <i class="fa-solid fa-gear"></i>
                             </span>
                             <span>System Settings</span>
                         </div>
-                        <i class="fa-solid fa-chevron-down sidebar-chevron"></i>
                     </a>
-                    <div id="submenu-account" class="collapse {{ in_array(Route::currentRouteName(), ['dashboard.notifications', 'dashboard.account', 'dashboard.settings']) ? 'show' : '' }}" data-bs-parent="#menu-accordion">
-                        <div class="sidebar-submenu">
-                            <a class="sidebar-sublink {{ Route::currentRouteName() == 'dashboard.notifications' ? 'active' : '' }}" href="{{ route('dashboard.notifications') }}">
-                                <span class="d-flex align-items-center">
-                                    <i class="fa-solid fa-bell me-2 text-warning" style="width: 14px;"></i> Notifications
-                                </span>
-                            </a>
-                            <a class="sidebar-sublink {{ Route::currentRouteName() == 'dashboard.account' ? 'active' : '' }}" href="{{ route('dashboard.account') }}">
-                                <span class="d-flex align-items-center">
-                                    <i class="fa-solid fa-user me-2 text-info" style="width: 14px;"></i> Account Profile
-                                </span>
-                            </a>
-                            <a class="sidebar-sublink {{ Route::currentRouteName() == 'dashboard.settings' ? 'active' : '' }}" href="{{ route('dashboard.settings') }}">
-                                <span class="d-flex align-items-center">
-                                    <i class="fa-solid fa-sliders me-2 text-primary" style="width: 14px;"></i> Preferences
-                                </span>
-                            </a>
-                        </div>
-                    </div>
                 </li>
 
-                <!-- Help & Docs -->
+                <!-- Help & Documentation -->
                 <li>
                     <a class="sidebar-link {{ Route::currentRouteName() == 'dashboard.help' ? 'active' : '' }}" href="{{ route('dashboard.help') }}">
                         <div class="d-flex align-items-center">
@@ -492,12 +537,12 @@
             @else
                 {{-- for author (user_type == 2) --}}
 
-                <!-- 1. CREATOR WORKSPACE -->
+                <!-- 1. CREATOR STUDIO -->
                 <li class="sidebar-section-header">
                     Creator Studio
                 </li>
 
-                <!-- Dashboard Overview -->
+                <!-- Author Dashboard -->
                 <li>
                     <a class="sidebar-link {{ Route::currentRouteName() == 'dashboard.index' ? 'active' : '' }}" href="{{ route('dashboard.index') }}">
                         <div class="d-flex align-items-center">
@@ -509,7 +554,7 @@
                     </a>
                 </li>
 
-                <!-- Write / New Post -->
+                <!-- Write Article -->
                 <li>
                     <a class="sidebar-link {{ Route::currentRouteName() == 'blogs.create' ? 'active' : '' }}" href="{{ route('blogs.create') }}">
                         <div class="d-flex align-items-center">
@@ -531,11 +576,10 @@
                             </span>
                             <span>My Articles</span>
                         </div>
-                        <span class="badge bg-light text-secondary border small px-1.5 py-0.5 rounded font-mono" style="font-size: 0.7rem;">My Posts</span>
                     </a>
                 </li>
 
-                <!-- Article Performance / Analytics -->
+                <!-- Performance & Stats -->
                 <li>
                     <a class="sidebar-link {{ Route::currentRouteName() == 'dashboard.charts' ? 'active' : '' }}" href="{{ route('dashboard.charts') }}">
                         <div class="d-flex align-items-center">
@@ -544,7 +588,6 @@
                             </span>
                             <span>Performance &amp; Stats</span>
                         </div>
-                        <span class="badge bg-success bg-opacity-10 text-success small px-1.5 py-0.5 rounded font-mono" style="font-size: 0.65rem;">Stats</span>
                     </a>
                 </li>
 
@@ -566,9 +609,9 @@
                     </a>
                 </li>
 
-                <!-- Explore Categories -->
+                <!-- Explore Topics -->
                 <li>
-                    <a class="sidebar-link" href="{{ route('categories.index') }}" target="_blank">
+                    <a class="sidebar-link" href="{{ route('categories.index') ?? '#' }}" target="_blank">
                         <div class="d-flex align-items-center">
                             <span class="sidebar-icon-wrap" style="color: #10b981;">
                                 <i class="fa-solid fa-shapes"></i>
@@ -579,9 +622,9 @@
                     </a>
                 </li>
 
-                <!-- Fellow Authors -->
+                <!-- Meet Authors -->
                 <li>
-                    <a class="sidebar-link" href="{{ route('authors.index') }}" target="_blank">
+                    <a class="sidebar-link" href="{{ route('authors.index') ?? '#' }}" target="_blank">
                         <div class="d-flex align-items-center">
                             <span class="sidebar-icon-wrap" style="color: #8b5cf6;">
                                 <i class="fa-solid fa-users"></i>
@@ -609,7 +652,7 @@
                     </a>
                 </li>
 
-                <!-- Account / Profile -->
+                <!-- Author Profile -->
                 <li>
                     <a class="sidebar-link {{ Route::currentRouteName() == 'dashboard.account' ? 'active' : '' }}" href="{{ route('dashboard.account') }}">
                         <div class="d-flex align-items-center">
@@ -617,6 +660,18 @@
                                 <i class="fa-solid fa-user-pen text-info"></i>
                             </span>
                             <span>Author Profile</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Comments -->
+                <li>
+                    <a class="sidebar-link" href="#">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-comments"></i>
+                            </span>
+                            <span>Comments</span>
                         </div>
                     </a>
                 </li>
@@ -629,6 +684,30 @@
                                 <i class="fa-solid fa-circle-question"></i>
                             </span>
                             <span>Author Guidelines</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Settings -->
+                <li>
+                    <a class="sidebar-link {{ Route::currentRouteName() == 'dashboard.settings' ? 'active' : '' }}" href="{{ route('dashboard.settings') }}">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-gear"></i>
+                            </span>
+                            <span>Settings</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Logout -->
+                <li>
+                    <a class="sidebar-link" href="{{ route('login') }}">
+                        <div class="d-flex align-items-center">
+                            <span class="sidebar-icon-wrap">
+                                <i class="fa-solid fa-right-from-bracket text-danger"></i>
+                            </span>
+                            <span>Logout</span>
                         </div>
                     </a>
                 </li>

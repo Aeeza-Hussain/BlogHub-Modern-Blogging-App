@@ -24,6 +24,8 @@ Route::get('/home', [HomeController::class, 'index']);
 Route::middleware(['auth', 'can.publish'])->group(function () {
     Route::get('/blogs/create', [ArticleController::class, 'create'])->name('blogs.create');
     Route::post('/blogs', [ArticleController::class, 'store'])->name('blogs.store');
+    Route::get('/blogs/{id}/edit', [ArticleController::class, 'edit'])->name('blogs.edit');
+    Route::put('/blogs/{id}', [ArticleController::class, 'update'])->name('blogs.update');
     Route::post('/blogs/{id}/like', [ArticleController::class, 'like'])->name('blogs.like');
     Route::post('/blogs/{id}/comments', [ArticleController::class, 'storeComment'])->name('blogs.comments.store');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

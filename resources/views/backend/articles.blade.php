@@ -101,6 +101,7 @@
                                 <td class="cell"><span>{{ $article->created_at->format('M d, Y') }}</span></td>
                                 <td class="cell">
                                     <a class="btn-sm app-btn-secondary" href="{{ route('blogs.show', $article->slug) }}" target="_blank" title="View"><i class="fa-solid fa-eye"></i></a>
+                                    <a class="btn-sm app-btn-secondary text-primary" href="{{ route('blogs.edit', $article->id) }}" title="Edit"><i class="fa-solid fa-pen"></i></a>
                                     <form action="{{ route('dashboard.articles.delete', $article->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this article?');">
                                         @csrf
                                         @method('DELETE')

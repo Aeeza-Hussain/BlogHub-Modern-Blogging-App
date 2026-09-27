@@ -46,10 +46,22 @@ class HomeController extends Controller
             ->latest('published_at')
             ->take(8)
             ->get();
+            
+        if ($trendingArticles->count() < 4) {
+            $moreTrending = Article::with(['category', 'author'])
+                ->whereNotIn('id', $excludedIds)
+                ->whereNotIn('id', $trendingArticles->pluck('id')->toArray())
+                ->orderBy('views_count', 'desc')
+                ->latest('published_at')
+                ->take(8 - $trendingArticles->count())
+                ->get();
+            $trendingArticles = $trendingArticles->concat($moreTrending);
+        }
 
         // 3. Latest published articles for main section grid
         $latestArticles = Article::with(['category', 'author'])
             ->whereNotIn('id', $excludedIds)
+            ->whereNotIn('id', $trendingArticles->pluck('id')->toArray())
             ->latest('published_at')
             ->take(6)
             ->get();

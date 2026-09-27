@@ -116,7 +116,7 @@ class ArticleController extends Controller
             'category_id' => 'required|exists:categories,id',
             'excerpt' => 'required|string|max:500',
             'body' => 'required|string',
-            'featured_image' => 'nullable|url|max:2048',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
             'reading_time' => 'nullable|integer|min:1|max:60',
         ];
 
@@ -130,7 +130,7 @@ class ArticleController extends Controller
             'category_id.exists' => 'The selected category no longer exists.',
             'excerpt.required' => 'Please add a short summary so the post looks good in listings.',
             'body.required' => 'The article body cannot be empty.',
-            'featured_image.url' => 'The cover image must be a valid image URL.',
+            'featured_image.image' => 'The cover image must be a valid image file.',
         ]);
 
         // articles.author_id is a foreign key to authors.id, so it must be the
@@ -146,9 +146,18 @@ class ArticleController extends Controller
         $article->slug = $this->uniqueSlug($validated['title']);
         $article->category_id = $validated['category_id'];
         $article->author_id = $author->id;
+        
+        $imagePath = null;
+        if ($request->hasFile('featured_image')) {
+            $imagePath = $request->file('featured_image')->store('articles', 'public');
+            $article->featured_image = asset('storage/' . $imagePath);
+        } else {
+            // Default aesthetic placeholder to prevent broken images
+            $article->featured_image = 'https://ui-avatars.com/api/?name=' . urlencode($validated['title']) . '&background=random&color=ffffff&size=1200';
+        }
+
         $article->excerpt = $validated['excerpt'];
         $article->body = $validated['body'];
-        $article->featured_image = $validated['featured_image'] ?? 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=80';
         $article->reading_time = $validated['reading_time'] ?? 5;
         $article->views_count = 0;
         $article->likes_count = 0;
@@ -156,6 +165,85 @@ class ArticleController extends Controller
         $article->save();
 
         return redirect()->route('blogs.show', $article->slug)->with('success', 'Article published successfully!');
+    }
+
+    /**
+     * Show the form for editing the specified article.
+     */
+    public function edit($id)
+    {
+        $article = Article::findOrFail($id);
+        $user = auth()->user();
+        $author = $user->ensureAuthorProfile();
+
+        // Check ownership if not admin
+        if (!$user->isAdmin()) {
+            if ($article->author_id !== $author->id) {
+                abort(403, 'Unauthorized action. You can only edit your own articles.');
+            }
+        }
+
+        $categories = Category::orderBy('name')->get();
+        $authors = $user->isAdmin() ? Author::orderBy('name')->get() : collect();
+
+        return view('Frontend.blogs.edit', compact('article', 'categories', 'authors', 'author'));
+    }
+
+    /**
+     * Update the specified article in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        $article = Article::findOrFail($id);
+        $user = auth()->user();
+        $author = $user->ensureAuthorProfile();
+
+        // Check ownership if not admin
+        if (!$user->isAdmin()) {
+            if ($article->author_id !== $author->id) {
+                abort(403, 'Unauthorized action. You can only edit your own articles.');
+            }
+        }
+
+        $rules = [
+            'title' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'excerpt' => 'required|string|max:500',
+            'body' => 'required|string',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+            'reading_time' => 'nullable|integer|min:1|max:60',
+        ];
+
+        if ($user->isAdmin()) {
+            $rules['author_id'] = 'nullable|exists:authors,id';
+        }
+
+        $validated = $request->validate($rules, [
+            'category_id.required' => 'Please choose a category for your article.',
+            'excerpt.required' => 'Please add a short summary so the post looks good in listings.',
+            'body.required' => 'The article body cannot be empty.',
+            'featured_image.image' => 'The cover image must be a valid image file.',
+        ]);
+
+        if ($user->isAdmin() && !empty($validated['author_id'])) {
+            $author = Author::findOrFail($validated['author_id']);
+        }
+
+        $article->title = $validated['title'];
+        $article->category_id = $validated['category_id'];
+        $article->author_id = $author->id;
+        
+        if ($request->hasFile('featured_image')) {
+            $imagePath = $request->file('featured_image')->store('articles', 'public');
+            $article->featured_image = asset('storage/' . $imagePath);
+        }
+
+        $article->excerpt = $validated['excerpt'];
+        $article->body = $validated['body'];
+        $article->reading_time = $validated['reading_time'] ?? 5;
+        $article->save();
+
+        return redirect()->route('dashboard.articles')->with('success', 'Article updated successfully!');
     }
 
     /**
