@@ -10,6 +10,8 @@ use App\Models\Author;
 use App\Models\Comment;
 use App\Models\ContactMessage;
 use App\Models\HomeSetting;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
@@ -375,5 +377,153 @@ class DashboardController extends Controller
         $author->delete();
 
         return redirect()->route('dashboard.website.section', 'authors')->with('success', "Author \"{$name}\" deleted successfully!");
+    }
+
+    /* ============================================================
+     * USER MANAGEMENT (Admin Only)
+     * ============================================================ */
+
+    public function users(Request $request)
+    {
+        $query = User::query();
+
+        if ($request->filled('search')) {
+            $s = $request->input('search');
+            $query->where(function ($q) use ($s) {
+                $q->where('name', 'like', "%{$s}%")
+                  ->orWhere('email', 'like', "%{$s}%");
+            });
+        }
+
+        if ($request->filled('role') && $request->input('role') !== 'all') {
+            $query->where('user_type', $request->input('role'));
+        }
+
+        $users = $query->latest()->paginate(15)->withQueryString();
+
+        $totalAdmins   = User::where('user_type', 1)->count();
+        $totalAuthors  = User::where('user_type', 2)->count();
+        $totalRegular  = User::where('user_type', 0)->count();
+
+        return view('backend.users', compact('users', 'totalAdmins', 'totalAuthors', 'totalRegular'));
+    }
+
+    public function updateUserType(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        // Protect against changing your own role
+        if ($user->id === auth()->id()) {
+            return redirect()->route('dashboard.users')->with('error', 'You cannot change your own role.');
+        }
+
+        $validated = $request->validate([
+            'user_type' => 'required|integer|in:0,1,2',
+        ]);
+
+        $user->user_type = $validated['user_type'];
+        $user->save();
+
+        // If promoted to author, ensure author profile exists
+        if ($validated['user_type'] == 2) {
+            $user->ensureAuthorProfile();
+        }
+
+        $roleLabels = [0 => 'Regular User', 1 => 'Admin', 2 => 'Author'];
+        $label = $roleLabels[$validated['user_type']] ?? 'Unknown';
+
+        return redirect()->route('dashboard.users')->with('success', "{$user->name}'s role updated to {$label}.");
+    }
+
+    public function deleteUser($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Protect against self-deletion
+        if ($user->id === auth()->id()) {
+            return redirect()->route('dashboard.users')->with('error', 'You cannot delete your own account.');
+        }
+
+        $name = $user->name;
+        $user->delete();
+
+        return redirect()->route('dashboard.users')->with('success', "User \"{$name}\" has been deleted.");
+    }
+
+    /* ============================================================
+     * ALL ARTICLES (Admin Overview)
+     * ============================================================ */
+
+    public function allArticles(Request $request)
+    {
+        $query = Article::with(['category', 'author']);
+
+        if ($request->filled('search')) {
+            $s = $request->input('search');
+            $query->where(function ($q) use ($s) {
+                $q->where('title', 'like', "%{$s}%")
+                  ->orWhere('excerpt', 'like', "%{$s}%");
+            });
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->input('category'));
+        }
+
+        $sort = $request->get('sort', 'newest');
+        if ($sort === 'oldest') {
+            $query->oldest();
+        } elseif ($sort === 'popular') {
+            $query->orderBy('views_count', 'desc');
+        } else {
+            $query->latest();
+        }
+
+        $articles   = $query->paginate(15)->withQueryString();
+        $categories = Category::orderBy('name')->get();
+        $totalArticles = Article::count();
+        $totalViews    = Article::sum('views_count');
+        $totalLikes    = Article::sum('likes_count');
+
+        return view('backend.all-articles', compact(
+            'articles', 'categories', 'totalArticles', 'totalViews', 'totalLikes'
+        ));
+    }
+
+    public function adminDeleteArticle($id)
+    {
+        $article = Article::findOrFail($id);
+        $title = $article->title;
+        $article->delete();
+        return redirect()->route('dashboard.all-articles')->with('success', "Article \"{$title}\" deleted.");
+    }
+
+    /* ============================================================
+     * COMMENTS MANAGEMENT (Admin)
+     * ============================================================ */
+
+    public function comments(Request $request)
+    {
+        $query = Comment::with('article');
+
+        if ($request->filled('search')) {
+            $s = $request->input('search');
+            $query->where(function ($q) use ($s) {
+                $q->where('user_name', 'like', "%{$s}%")
+                  ->orWhere('content', 'like', "%{$s}%");
+            });
+        }
+
+        $comments      = $query->latest()->paginate(20)->withQueryString();
+        $totalComments = Comment::count();
+
+        return view('backend.comments', compact('comments', 'totalComments'));
+    }
+
+    public function deleteComment($id)
+    {
+        $comment = Comment::findOrFail($id);
+        $comment->delete();
+        return redirect()->route('dashboard.comments')->with('success', 'Comment deleted successfully.');
     }
 }

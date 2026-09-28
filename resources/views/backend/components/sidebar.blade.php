@@ -363,20 +363,19 @@
 
                 <!-- Article Reviews -->
                 <li>
-                    <a class="sidebar-link" href="#">
+                    <a class="sidebar-link {{ request()->routeIs('dashboard.all-articles') ? 'active' : '' }}" href="{{ route('dashboard.all-articles') }}">
                         <div class="d-flex align-items-center">
                             <span class="sidebar-icon-wrap">
                                 <i class="fa-solid fa-clipboard-check"></i>
                             </span>
-                            <span>Article Reviews</span>
+                            <span>All Articles</span>
                         </div>
-                        <span class="badge bg-warning text-dark small px-1.5 py-0.5 rounded font-mono" style="font-size: 0.65rem;">Pending</span>
                     </a>
                 </li>
 
                 <!-- Comments -->
                 <li>
-                    <a class="sidebar-link" href="#">
+                    <a class="sidebar-link {{ request()->routeIs('dashboard.comments') ? 'active' : '' }}" href="{{ route('dashboard.comments') }}">
                         <div class="d-flex align-items-center">
                             <span class="sidebar-icon-wrap">
                                 <i class="fa-solid fa-comments"></i>
@@ -393,7 +392,7 @@
 
                 <!-- Authors -->
                 <li>
-                    <a class="sidebar-link" href="#">
+                    <a class="sidebar-link {{ request()->routeIs('dashboard.website.section') && request()->route('section') == 'authors' ? 'active' : '' }}" href="{{ route('dashboard.website.section', 'authors') }}">
                         <div class="d-flex align-items-center">
                             <span class="sidebar-icon-wrap">
                                 <i class="fa-solid fa-user-pen"></i>
@@ -405,7 +404,7 @@
 
                 <!-- Users -->
                 <li>
-                    <a class="sidebar-link" href="#">
+                    <a class="sidebar-link {{ request()->routeIs('dashboard.users') ? 'active' : '' }}" href="{{ route('dashboard.users') }}">
                         <div class="d-flex align-items-center">
                             <span class="sidebar-icon-wrap">
                                 <i class="fa-solid fa-users"></i>
@@ -702,7 +701,7 @@
 
                 <!-- Logout -->
                 <li>
-                    <a class="sidebar-link" href="{{ route('login') }}">
+                    <a class="sidebar-link" href="#" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();">
                         <div class="d-flex align-items-center">
                             <span class="sidebar-icon-wrap">
                                 <i class="fa-solid fa-right-from-bracket text-danger"></i>
@@ -710,6 +709,9 @@
                             <span>Logout</span>
                         </div>
                     </a>
+                    <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
                 </li>
 
             @endif

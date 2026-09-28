@@ -28,8 +28,10 @@ Route::middleware(['auth', 'can.publish'])->group(function () {
     Route::put('/blogs/{id}', [ArticleController::class, 'update'])->name('blogs.update');
     Route::post('/blogs/{id}/like', [ArticleController::class, 'like'])->name('blogs.like');
     Route::post('/blogs/{id}/comments', [ArticleController::class, 'storeComment'])->name('blogs.comments.store');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+// Logout only requires auth, NOT can.publish
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 Route::get('/blogs', [ArticleController::class, 'index'])->name('blogs.index');
 Route::get('/blogs/{slug}', [ArticleController::class, 'show'])->name('blogs.show');
@@ -85,6 +87,19 @@ Route::middleware('auth')->group(function () {
                 Route::post('/website/authors', [DashboardController::class, 'storeAuthor'])->name('dashboard.website.authors.store');
                 Route::put('/website/authors/{id}', [DashboardController::class, 'updateAuthor'])->name('dashboard.website.authors.update');
                 Route::delete('/website/authors/{id}', [DashboardController::class, 'deleteAuthor'])->name('dashboard.website.authors.delete');
+
+                // User Management
+                Route::get('/users', [DashboardController::class, 'users'])->name('dashboard.users');
+                Route::put('/users/{id}/type', [DashboardController::class, 'updateUserType'])->name('dashboard.users.type');
+                Route::delete('/users/{id}', [DashboardController::class, 'deleteUser'])->name('dashboard.users.delete');
+
+                // Admin: All Articles
+                Route::get('/all-articles', [DashboardController::class, 'allArticles'])->name('dashboard.all-articles');
+                Route::delete('/all-articles/{id}', [DashboardController::class, 'adminDeleteArticle'])->name('dashboard.all-articles.delete');
+
+                // Comments Management
+                Route::get('/comments', [DashboardController::class, 'comments'])->name('dashboard.comments');
+                Route::delete('/comments/{id}', [DashboardController::class, 'deleteComment'])->name('dashboard.comments.delete');
             });
         });
 });

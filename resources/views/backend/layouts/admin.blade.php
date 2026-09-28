@@ -114,7 +114,14 @@
 									<li><a class="dropdown-item" href="{{ route('dashboard.settings') }}"><i class="fa-solid fa-gear me-2"></i> Settings</a></li>
 									<li><a class="dropdown-item" href="{{ route('home') }}"><i class="fa-solid fa-globe me-2"></i> View Website</a></li>
 									<li><hr class="dropdown-divider"></li>
-									<li><a class="dropdown-item" href="{{ route('login') }}"><i class="fa-solid fa-right-from-bracket me-2"></i> Log Out</a></li>
+									<li>
+										<a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('admin-logout-form').submit();">
+											<i class="fa-solid fa-right-from-bracket me-2"></i> Log Out
+										</a>
+										<form id="admin-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+											@csrf
+										</form>
+									</li>
 								</ul>
 				            </div><!--//app-user-dropdown--> 
 			            </div><!--//app-utilities-->
