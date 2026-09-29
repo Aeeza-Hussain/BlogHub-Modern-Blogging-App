@@ -1,80 +1,88 @@
 @extends('backend.layouts.admin')
 
-@section('title', 'BlogHub - Notifications & Feedback')
+@section('title', 'Notifications — BlogHub')
 
 @section('content')
-<div class="position-relative mb-4">
-    <div class="row g-3 justify-content-between align-items-center">
-        <div class="col-auto">
-            <h1 class="app-page-title mb-0"><i class="fa-solid fa-bell text-primary me-2"></i> Notifications &amp; Inquiries</h1>
-        </div>
+
+{{-- Page Header --}}
+<div class="bh-page-header">
+    <div>
+        <h1 class="bh-page-title">Notifications &amp; Inquiries</h1>
+        <p class="bh-page-sub">Contact form submissions and recent user comments.</p>
     </div>
 </div>
 
-<h4 class="mb-3 text-muted">Contact Form Submissions</h4>
-
-@forelse($messages as $msg)
-<div class="app-card app-card-notification shadow-sm mb-4">
-    <div class="app-card-header px-4 py-3">
-        <div class="row g-3 align-items-center">
-            <div class="col-12 col-lg-auto text-center text-lg-start">						        
-                <div class="app-icon-holder bg-light text-primary fs-5">
-                    <i class="fa-solid fa-envelope"></i>
+{{-- Contact Submissions --}}
+<div class="bh-card mb-4">
+    <div class="bh-card-header">
+        <div class="bh-card-title"><i class="fa-solid fa-envelope me-2" style="color:#2563eb;"></i> Contact Submissions</div>
+        <span class="bh-badge" style="background:rgba(37,99,235,0.1); color:#2563eb; padding:3px 8px;">{{ count($messages) }}</span>
+    </div>
+    <div class="bh-card-body" style="padding:0;">
+        @forelse($messages as $msg)
+        <div style="padding:1rem 1.25rem; border-bottom:1px solid var(--border);">
+            <div class="d-flex align-items-start gap-3">
+                <div style="width:36px; height:36px; border-radius:8px; background:rgba(37,99,235,0.1); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <i class="fa-solid fa-envelope" style="color:#2563eb; font-size:0.82rem;"></i>
+                </div>
+                <div style="flex:1; min-width:0;">
+                    <div class="d-flex align-items-center justify-content-between gap-2 mb-1">
+                        <div style="font-weight:600; font-size:0.88rem; color:var(--text-primary);">{{ $msg->subject }}</div>
+                        <span style="font-size:0.72rem; color:var(--text-light); white-space:nowrap;">{{ $msg->created_at->diffForHumans() }}</span>
+                    </div>
+                    <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:6px;">
+                        <strong>{{ $msg->name }}</strong> &middot; {{ $msg->email }}
+                    </div>
+                    <div style="font-size:0.84rem; color:var(--text-primary); line-height:1.5;">{{ Str::limit($msg->message, 200) }}</div>
                 </div>
             </div>
-            <div class="col-12 col-lg-auto text-center text-lg-start">
-                <div class="notification-type mb-2"><span class="badge bg-primary">Inquiry</span></div>
-                <h4 class="notification-title mb-1">{{ $msg->subject }}</h4>
-                <ul class="notification-meta list-inline mb-0">
-                    <li class="list-inline-item">{{ $msg->created_at->diffForHumans() }}</li>
-                    <li class="list-inline-item">|</li>
-                    <li class="list-inline-item"><strong>{{ $msg->name }}</strong> ({{ $msg->email }})</li>
-                </ul>
+        </div>
+        @empty
+        <div style="padding:2.5rem; text-align:center; color:var(--text-light);">
+            <i class="fa-solid fa-inbox" style="font-size:1.5rem; opacity:.3; display:block; margin-bottom:.5rem;"></i>
+            No contact submissions yet.
+        </div>
+        @endforelse
+    </div>
+</div>
+
+{{-- Recent Comments --}}
+<div class="bh-card">
+    <div class="bh-card-header">
+        <div class="bh-card-title"><i class="fa-solid fa-comments me-2" style="color:#10b981;"></i> Recent Comments</div>
+        <span class="bh-badge" style="background:rgba(16,185,129,0.1); color:#10b981; padding:3px 8px;">{{ count($comments) }}</span>
+    </div>
+    <div class="bh-card-body" style="padding:0;">
+        @forelse($comments as $comment)
+        <div style="padding:1rem 1.25rem; border-bottom:1px solid var(--border);">
+            <div class="d-flex align-items-start gap-3">
+                <img src="{{ $comment->user_avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($comment->user_name) . '&background=64748b&color=fff&bold=true' }}"
+                     class="rounded-circle" style="width:36px; height:36px; object-fit:cover; flex-shrink:0;">
+                <div style="flex:1; min-width:0;">
+                    <div class="d-flex align-items-center justify-content-between gap-2 mb-1">
+                        <div>
+                            <span style="font-weight:600; font-size:0.85rem; color:var(--text-primary);">{{ $comment->user_name }}</span>
+                            <span style="font-size:0.75rem; color:var(--text-light); margin-left:6px;">commented on</span>
+                            @if($comment->article)
+                            <a href="{{ route('blogs.show', $comment->article->slug) }}" target="_blank"
+                               style="font-size:0.78rem; color:var(--brand); font-weight:500; text-decoration:none;">
+                                {{ Str::limit($comment->article->title, 40) }}
+                            </a>
+                            @endif
+                        </div>
+                        <span style="font-size:0.72rem; color:var(--text-light); white-space:nowrap;">{{ $comment->created_at->diffForHumans() }}</span>
+                    </div>
+                    <div style="font-size:0.84rem; color:var(--text-muted); line-height:1.5; margin-top:4px;">"{{ Str::limit($comment->content, 200) }}"</div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="app-card-body p-4">
-        <div class="notification-content">{{ $msg->message }}</div>
-    </div>
-</div>
-@empty
-<div class="app-card shadow-sm p-4 text-center text-muted mb-4">
-    No contact form submissions recorded yet.
-</div>
-@endforelse
-
-<h4 class="mt-5 mb-3 text-muted">Latest User Comments</h4>
-
-@forelse($comments as $comment)
-<div class="app-card app-card-notification shadow-sm mb-4 border-left-decoration">
-    <div class="app-card-header px-4 py-3">
-        <div class="row g-3 align-items-center">
-            <div class="col-12 col-lg-auto text-center text-lg-start">						        
-                <img class="profile-image rounded-circle" src="{{ $comment->user_avatar ?? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80' }}" style="width: 45px; height: 45px; object-fit: cover;" alt="">
-            </div>
-            <div class="col-12 col-lg-auto text-center text-lg-start">
-                <div class="notification-type mb-2"><span class="badge bg-success">Comment</span></div>
-                <h4 class="notification-title mb-1">Comment on: "{{ $comment->article->title ?? 'Article' }}"</h4>
-                <ul class="notification-meta list-inline mb-0">
-                    <li class="list-inline-item">{{ $comment->created_at->diffForHumans() }}</li>
-                    <li class="list-inline-item">|</li>
-                    <li class="list-inline-item">By <strong>{{ $comment->user_name }}</strong></li>
-                </ul>
-            </div>
+        @empty
+        <div style="padding:2.5rem; text-align:center; color:var(--text-light);">
+            <i class="fa-solid fa-comments" style="font-size:1.5rem; opacity:.3; display:block; margin-bottom:.5rem;"></i>
+            No recent comments.
         </div>
+        @endforelse
     </div>
-    <div class="app-card-body p-4">
-        <div class="notification-content">"{{ $comment->content }}"</div>
-    </div>
-    @if($comment->article)
-    <div class="app-card-footer px-4 py-3">
-        <a class="action-link" href="{{ route('blogs.show', $comment->article->slug) }}" target="_blank">View Post <i class="fa-solid fa-arrow-right me-1"></i></a>
-    </div>
-    @endif
 </div>
-@empty
-<div class="app-card shadow-sm p-4 text-center text-muted">
-    No recent user comments available.
-</div>
-@endforelse
+
 @endsection
