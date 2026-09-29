@@ -1,228 +1,242 @@
 @extends('backend.layouts.admin')
 
-@section('title', 'BlogHub - Admin Overview')
+@section('title', 'Dashboard — BlogHub')
 
 @section('content')
-<h1 class="app-page-title">Dashboard Overview</h1>
-    
-<div class="app-card alert alert-dismissible shadow-sm mb-4 border-left-decoration" role="alert">
-    <div class="inner">
-        <div class="app-card-body p-3 p-lg-4">
-            <h3 class="mb-3">Welcome to BlogHub Portal!</h3>
-            <div class="row gx-5 gy-3">
-                <div class="col-12 col-lg-9">
-                    <div>Manage your blog posts, track reader analytics, moderate comments, and customize your publication directly from this central dashboard.</div>
-                </div>
-                <div class="col-12 col-lg-3 text-lg-end">
-                    <a class="btn app-btn-primary" href="{{ route('blogs.create') }}">
-                        <i class="fa-solid fa-plus me-1"></i> Create New Post
-                    </a>
-                </div>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+
+{{-- Page Header --}}
+<div class="bh-page-header">
+    <div>
+        <h1 class="bh-page-title">Dashboard</h1>
+        <p class="bh-page-sub">Welcome back, {{ auth()->user()->name }}. Here's what's happening today.</p>
     </div>
+    <a href="{{ route('blogs.create') }}" class="bh-btn bh-btn-primary">
+        <i class="fa-solid fa-plus"></i> New Article
+    </a>
 </div>
-    
-<!-- KPI Stat Cards -->
-<div class="row g-4 mb-4">
-    <div class="col-6 col-lg-3">
-        <div class="app-card app-card-stat shadow-sm h-100">
-            <div class="app-card-body p-3 p-lg-4">
-                <h4 class="stats-type mb-1">Total Articles</h4>
-                <div class="stats-figure">{{ number_format($totalArticles) }}</div>
-                <div class="stats-meta text-success">
-                    <i class="fa-solid fa-file-lines me-1"></i> Published
-                </div>
-            </div>
-            <a class="app-card-link-mask" href="{{ route('dashboard.articles') }}"></a>
-        </div>
-    </div>
-    
-    <div class="col-6 col-lg-3">
-        <div class="app-card app-card-stat shadow-sm h-100">
-            <div class="app-card-body p-3 p-lg-4">
-                <h4 class="stats-type mb-1">Total Views</h4>
-                <div class="stats-figure">{{ number_format($totalViews) }}</div>
-                <div class="stats-meta text-success">
-                    <i class="fa-solid fa-eye me-1"></i> +12% this month
-                </div>
-            </div>
-            <a class="app-card-link-mask" href="{{ route('dashboard.charts') }}"></a>
-        </div>
-    </div>
 
+{{-- Stat Cards --}}
+<div class="row g-3 mb-4">
     <div class="col-6 col-lg-3">
-        <div class="app-card app-card-stat shadow-sm h-100">
-            <div class="app-card-body p-3 p-lg-4">
-                <h4 class="stats-type mb-1">Total Likes</h4>
-                <div class="stats-figure">{{ number_format($totalLikes) }}</div>
-                <div class="stats-meta text-primary">
-                    <i class="fa-solid fa-heart me-1"></i> Reader Appreciation
-                </div>
+        <a href="{{ route('dashboard.all-articles') }}" class="bh-stat">
+            <div class="bh-stat-icon" style="background:rgba(200,70,31,0.1); color:#C8461F;">
+                <i class="fa-solid fa-newspaper"></i>
             </div>
-            <a class="app-card-link-mask" href="{{ route('dashboard.charts') }}"></a>
-        </div>
+            <div>
+                <div class="bh-stat-num">{{ number_format($totalArticles) }}</div>
+                <div class="bh-stat-label">Articles</div>
+            </div>
+        </a>
     </div>
-
     <div class="col-6 col-lg-3">
-        <div class="app-card app-card-stat shadow-sm h-100">
-            <div class="app-card-body p-3 p-lg-4">
-                <h4 class="stats-type mb-1">Total Comments</h4>
-                <div class="stats-figure">{{ number_format($totalComments) }}</div>
-                <div class="stats-meta text-info">
-                    <i class="fa-solid fa-comments me-1"></i> Active Discussions
-                </div>
+        <a href="{{ route('dashboard.charts') }}" class="bh-stat">
+            <div class="bh-stat-icon" style="background:rgba(37,99,235,0.1); color:#2563EB;">
+                <i class="fa-solid fa-eye"></i>
             </div>
-            <a class="app-card-link-mask" href="{{ route('dashboard.notifications') }}"></a>
-        </div>
+            <div>
+                <div class="bh-stat-num">{{ number_format($totalViews) }}</div>
+                <div class="bh-stat-label">Total Views</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-6 col-lg-3">
+        <a href="{{ route('dashboard.comments') }}" class="bh-stat">
+            <div class="bh-stat-icon" style="background:rgba(16,185,129,0.1); color:#10b981;">
+                <i class="fa-solid fa-comments"></i>
+            </div>
+            <div>
+                <div class="bh-stat-num">{{ number_format($totalComments) }}</div>
+                <div class="bh-stat-label">Comments</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-6 col-lg-3">
+        <a href="{{ route('dashboard.users') }}" class="bh-stat">
+            <div class="bh-stat-icon" style="background:rgba(139,92,246,0.1); color:#8b5cf6;">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div>
+                <div class="bh-stat-num">{{ number_format($totalUsers) }}</div>
+                <div class="bh-stat-label">Users</div>
+            </div>
+        </a>
     </div>
 </div>
 
-<!-- Analytics Charts Section -->
-<div class="row g-4 mb-4">
-    <div class="col-12 col-lg-6">
-        <div class="app-card app-card-chart h-100 shadow-sm">
-            <div class="app-card-header p-3">
-                <div class="row justify-content-between align-items-center">
-                    <div class="col-auto">
-                        <h4 class="app-card-title"><i class="fa-solid fa-chart-line text-primary me-2"></i> Monthly Readership Trends</h4>
+{{-- Charts + Quick Stats --}}
+<div class="row g-3 mb-4">
+    {{-- Line Chart --}}
+    <div class="col-12 col-lg-8">
+        <div class="bh-card" style="height:100%;">
+            <div class="bh-card-header">
+                <div class="bh-card-title"><i class="fa-solid fa-chart-area me-2" style="color:var(--brand);"></i> Readership Trends</div>
+                <a href="{{ route('dashboard.charts') }}" class="bh-btn bh-btn-ghost bh-btn-sm">View All</a>
+            </div>
+            <div class="bh-card-body">
+                <canvas id="canvas-linechart" style="max-height:230px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    {{-- Quick Numbers --}}
+    <div class="col-12 col-lg-4">
+        <div class="bh-card" style="height:100%;">
+            <div class="bh-card-header">
+                <div class="bh-card-title"><i class="fa-solid fa-bolt me-2" style="color:#f59e0b;"></i> Quick Glance</div>
+            </div>
+            <div class="bh-card-body">
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:8px; height:8px; border-radius:50%; background:#dc2626;"></div>
+                            <span style="font-size:0.84rem;">Total Likes</span>
+                        </div>
+                        <span style="font-weight:700; font-size:0.92rem;">{{ number_format($totalLikes) }}</span>
                     </div>
-                    <div class="col-auto">
-                        <div class="card-header-action">
-                            <a href="{{ route('dashboard.charts') }}">View detailed analytics</a>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:8px; height:8px; border-radius:50%; background:#2563eb;"></div>
+                            <span style="font-size:0.84rem;">Authors</span>
+                        </div>
+                        <span style="font-weight:700; font-size:0.92rem;">{{ number_format($totalAuthors) }}</span>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:8px; height:8px; border-radius:50%; background:#10b981;"></div>
+                            <span style="font-size:0.84rem;">Categories</span>
+                        </div>
+                        <span style="font-weight:700; font-size:0.92rem;">{{ $categories->count() }}</span>
+                    </div>
+
+                    <hr style="border-color:var(--border); margin:0.5rem 0;">
+
+                    {{-- Category breakdown --}}
+                    @foreach($categories->sortByDesc('articles_count')->take(5) as $cat)
+                    <div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span style="font-size:0.78rem; color:var(--text-muted);">{{ $cat->name }}</span>
+                            <span style="font-size:0.78rem; font-weight:600;">{{ $cat->articles_count }}</span>
+                        </div>
+                        <div style="width:100%; height:4px; background:var(--bg); border-radius:2px; overflow:hidden;">
+                            <div style="width:{{ $totalArticles > 0 ? round(($cat->articles_count / $totalArticles) * 100) : 0 }}%; height:100%; background:{{ $cat->color ?? 'var(--brand)' }}; border-radius:2px;"></div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="app-card-body p-3 p-lg-4">
-                <div class="chart-container">
-                    <canvas id="canvas-linechart" style="max-height: 250px;"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12 col-lg-6">
-        <div class="app-card app-card-chart h-100 shadow-sm">
-            <div class="app-card-header p-3">
-                <div class="row justify-content-between align-items-center">
-                    <div class="col-auto">
-                        <h4 class="app-card-title"><i class="fa-solid fa-folder-open text-primary me-2"></i> Articles by Category</h4>
-                    </div>
-                    <div class="col-auto">
-                        <div class="card-header-action">
-                            <a href="{{ route('dashboard.charts') }}">View Breakdown</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="app-card-body p-3 p-lg-4">
-                <div class="chart-container">
-                    <canvas id="canvas-barchart" style="max-height: 250px;"></canvas>
+                    @endforeach
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Recent Articles Table -->
-<div class="app-card app-card-orders-table shadow-sm mb-5">
-    <div class="app-card-header p-3">
-        <div class="row justify-content-between align-items-center">
-            <div class="col-auto">
-                <h4 class="app-card-title">Recent Articles</h4>
-            </div>
-            <div class="col-auto">
-                <a class="btn app-btn-secondary btn-sm" href="{{ route('dashboard.articles') }}">View All Articles</a>
-            </div>
-        </div>
+{{-- Recent Articles --}}
+<div class="bh-card">
+    <div class="bh-card-header">
+        <div class="bh-card-title"><i class="fa-solid fa-clock-rotate-left me-2" style="color:var(--brand);"></i> Recent Articles</div>
+        <a href="{{ route('dashboard.all-articles') }}" class="bh-btn bh-btn-ghost bh-btn-sm">View All</a>
     </div>
-    <div class="app-card-body">
-        <div class="table-responsive">
-            <table class="table app-table-hover mb-0 text-left">
-                <thead>
-                    <tr>
-                        <th class="cell">ID</th>
-                        <th class="cell">Title</th>
-                        <th class="cell">Category</th>
-                        <th class="cell">Author</th>
-                        <th class="cell">Views</th>
-                        <th class="cell">Published Date</th>
-                        <th class="cell">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($recentArticles as $article)
-                    <tr>
-                        <td class="cell">#{{ $article->id }}</td>
-                        <td class="cell">
-                            <span class="truncate fw-semibold">{{ Str::limit($article->title, 40) }}</span>
-                        </td>
-                        <td class="cell">
-                            <span class="badge" style="background-color: {{ $article->category->color ?? '#6c757d' }};">
-                                {{ $article->category->name }}
+    <div style="overflow-x:auto;">
+        <table class="bh-table">
+            <thead>
+                <tr>
+                    <th>Article</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th>Views</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($recentArticles as $article)
+                <tr>
+                    <td style="max-width:280px;">
+                        <div class="d-flex align-items-center gap-3">
+                            <img src="{{ $article->featured_image ?? 'https://ui-avatars.com/api/?name=' . urlencode($article->title) . '&background=C8461F&color=fff' }}"
+                                 class="rounded" style="width:42px; height:32px; object-fit:cover; flex-shrink:0;">
+                            <span class="fw-semibold" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px; display:block;">
+                                {{ $article->title }}
                             </span>
-                        </td>
-                        <td class="cell">{{ $article->author->name }}</td>
-                        <td class="cell"><i class="fa-solid fa-eye text-muted me-1"></i> {{ number_format($article->views_count) }}</td>
-                        <td class="cell"><span>{{ $article->created_at->format('M d, Y') }}</span></td>
-                        <td class="cell">
-                            <a class="btn-sm app-btn-secondary" href="{{ route('blogs.show', $article->slug) }}" target="_blank"><i class="fa-solid fa-external-link"></i></a>
-                            <form action="{{ route('dashboard.articles.delete', $article->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this article?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn-sm btn-outline-danger border-0"><i class="fa-solid fa-trash"></i></button>
-                            </form>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="7" class="text-center py-4 text-muted">No articles found.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="{{ $article->author->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($article->author->name ?? 'A') . '&background=C8461F&color=fff' }}"
+                                 class="rounded-circle" style="width:24px; height:24px; object-fit:cover;">
+                            <span>{{ $article->author->name ?? '—' }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="bh-badge" style="background:{{ ($article->category->color ?? '#C8461F') }}15; color:{{ $article->category->color ?? '#C8461F' }};">
+                            {{ $article->category->name ?? '—' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span style="color:var(--text-muted);">
+                            <i class="fa-solid fa-eye me-1" style="opacity:.5;"></i>{{ number_format($article->views_count) }}
+                        </span>
+                    </td>
+                    <td style="color:var(--text-muted); white-space:nowrap;">{{ $article->created_at->format('M d, Y') }}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a href="{{ route('blogs.show', $article->slug) }}" target="_blank"
+                               class="bh-btn bh-btn-ghost bh-btn-icon bh-btn-sm" title="View">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            <a href="{{ route('blogs.edit', $article->id) }}"
+                               class="bh-btn bh-btn-ghost bh-btn-icon bh-btn-sm" title="Edit">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="6" style="text-align:center; padding:2.5rem; color:var(--text-light);">
+                        <i class="fa-solid fa-inbox" style="font-size:1.5rem; opacity:.3; display:block; margin-bottom:.5rem;"></i>
+                        No articles yet.
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 </div>
+
 @endsection
 
 @section('scripts')
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Line Chart (Readership)
-        var lineCtx = document.getElementById('canvas-linechart').getContext('2d');
-        new Chart(lineCtx, {
+document.addEventListener("DOMContentLoaded", function() {
+    // Line Chart
+    var lineCtx = document.getElementById('canvas-linechart');
+    if (lineCtx) {
+        new Chart(lineCtx.getContext('2d'), {
             type: 'line',
             data: {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
                 datasets: [{
                     label: 'Page Views',
-                    borderColor: '#15a362',
-                    backgroundColor: 'rgba(21, 163, 98, 0.1)',
+                    borderColor: '#C8461F',
+                    backgroundColor: 'rgba(200, 70, 31, 0.08)',
                     data: [1200, 1900, 3000, 5000, 4200, 6800, 8500],
                     fill: true,
-                    tension: 0.3
+                    tension: 0.4,
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#C8461F'
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
+                    x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+                }
+            }
         });
-
-        // Bar Chart (Category distribution)
-        var barCtx = document.getElementById('canvas-barchart').getContext('2d');
-        new Chart(barCtx, {
-            type: 'bar',
-            data: {
-                labels: {!! json_encode($categories->pluck('name')) !!},
-                datasets: [{
-                    label: 'Posts',
-                    backgroundColor: '#5b99ea',
-                    data: {!! json_encode($categories->pluck('articles_count')) !!}
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    });
+    }
+});
 </script>
 @endsection

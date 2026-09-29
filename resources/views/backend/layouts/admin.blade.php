@@ -1,182 +1,510 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 <head>
-    <title>@yield('title', 'BlogHub Admin Dashboard')</title>
-    
-    <!-- Meta -->
+    <title>@yield('title', 'BlogHub Admin')</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="BlogHub Modern Admin Dashboard">
-    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}"> 
-    
-    <!-- FontAwesome JS-->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome -->
     <script defer src="{{ asset('backend/assets/plugins/fontawesome/js/all.min.js') }}"></script>
-    
-    <!-- App CSS -->  
-    <link id="theme-style" rel="stylesheet" href="{{ asset('backend/assets/css/portal.css') }}">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{{ asset('backend/assets/plugins/bootstrap/css/bootstrap.min.css') }}">
+
+    <style>
+        :root {
+            --brand:        #C8461F;
+            --brand-dark:   #a3360f;
+            --brand-light:  rgba(200,70,31,0.08);
+            --sidebar-w:    256px;
+            --header-h:     60px;
+            --bg:           #f4f6f9;
+            --surface:      #ffffff;
+            --border:       #e5e9f0;
+            --text-primary: #111827;
+            --text-muted:   #6b7280;
+            --text-light:   #9ca3af;
+            --radius:       10px;
+            --shadow:       0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md:    0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            margin: 0;
+            font-size: 14px;
+        }
+
+        /* ===== TOPBAR ===== */
+        .bh-topbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--header-h);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            z-index: 1040;
+            display: flex;
+            align-items: center;
+            padding: 0 1.25rem 0 0;
+            box-shadow: var(--shadow);
+        }
+
+        .bh-brand {
+            width: var(--sidebar-w);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 1.25rem;
+            text-decoration: none;
+        }
+        .bh-brand-icon {
+            width: 34px; height: 34px;
+            background: linear-gradient(135deg, var(--brand), #ea580c);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 0.9rem;
+            box-shadow: 0 3px 8px rgba(200,70,31,0.3);
+            flex-shrink: 0;
+        }
+        .bh-brand-name {
+            font-size: 1.05rem; font-weight: 800;
+            color: var(--text-primary); letter-spacing: -0.3px;
+        }
+        .bh-brand-name span { color: var(--brand); }
+
+        .bh-topbar-center { flex: 1; padding: 0 1rem; }
+        .bh-search-form { position: relative; max-width: 340px; }
+        .bh-search-form input {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 7px 14px 7px 36px;
+            font-size: 0.84rem;
+            width: 100%;
+            outline: none;
+            color: var(--text-primary);
+            transition: border-color .2s;
+        }
+        .bh-search-form input:focus { border-color: var(--brand); background: #fff; }
+        .bh-search-form .search-icon {
+            position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); font-size: 0.78rem;
+        }
+
+        .bh-topbar-actions { display: flex; align-items: center; gap: 6px; }
+
+        .bh-icon-btn {
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            border: none; background: transparent;
+            color: var(--text-muted);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: background .2s, color .2s;
+            position: relative; text-decoration: none;
+            font-size: 0.92rem;
+        }
+        .bh-icon-btn:hover { background: var(--bg); color: var(--text-primary); }
+        .bh-notif-dot {
+            position: absolute; top: 6px; right: 6px;
+            width: 7px; height: 7px;
+            background: var(--brand); border-radius: 50%;
+            border: 1.5px solid #fff;
+        }
+
+        .bh-user-btn {
+            display: flex; align-items: center; gap: 8px;
+            padding: 4px 10px 4px 4px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: transparent; cursor: pointer;
+            transition: background .2s;
+            text-decoration: none; color: inherit;
+        }
+        .bh-user-btn:hover { background: var(--bg); }
+        .bh-user-btn img {
+            width: 30px; height: 30px;
+            border-radius: 50%; object-fit: cover;
+        }
+        .bh-user-name { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); }
+        .bh-user-role { font-size: 0.7rem; color: var(--text-muted); }
+
+        .bh-mobile-toggle {
+            display: none; background: none; border: none;
+            font-size: 1.1rem; color: var(--text-primary);
+            cursor: pointer; padding: 6px; margin-right: 4px;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .bh-sidebar {
+            position: fixed;
+            top: var(--header-h); left: 0; bottom: 0;
+            width: var(--sidebar-w);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            z-index: 1030;
+            display: flex; flex-direction: column;
+            padding: 0.75rem 0.75rem 1.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+            transition: transform .25s ease;
+        }
+        .bh-sidebar::-webkit-scrollbar { width: 4px; }
+        .bh-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .bh-nav-label {
+            font-size: 0.66rem; font-weight: 700; letter-spacing: .08em;
+            text-transform: uppercase; color: var(--text-light);
+            padding: 1.1rem 0.5rem 0.35rem;
+        }
+
+        .bh-nav-link {
+            display: flex; align-items: center; gap: 9px;
+            padding: 8px 10px;
+            border-radius: 7px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.84rem; font-weight: 500;
+            transition: background .15s, color .15s;
+            margin-bottom: 1px;
+        }
+        .bh-nav-link:hover { background: var(--bg); color: var(--text-primary); }
+        .bh-nav-link.active {
+            background: var(--brand-light);
+            color: var(--brand);
+            font-weight: 600;
+        }
+        .bh-nav-link .nav-icon {
+            width: 18px; text-align: center; font-size: 0.82rem; flex-shrink: 0;
+        }
+        .bh-nav-link .nav-badge {
+            margin-left: auto;
+            font-size: 0.62rem; font-weight: 700;
+            background: var(--brand); color: #fff;
+            padding: 1px 6px; border-radius: 10px;
+        }
+
+        /* Submenu */
+        .bh-nav-submenu { padding-left: 27px; }
+        .bh-nav-submenu .bh-nav-link { font-size: 0.82rem; padding: 6px 10px; }
+
+        /* ===== MAIN CONTENT ===== */
+        .bh-main {
+            margin-left: var(--sidebar-w);
+            margin-top: var(--header-h);
+            padding: 1.75rem;
+            min-height: calc(100vh - var(--header-h));
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .bh-page-header {
+            display: flex; align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem; gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .bh-page-title { font-size: 1.35rem; font-weight: 700; color: var(--text-primary); margin: 0; }
+        .bh-page-sub  { font-size: 0.8rem; color: var(--text-muted); margin: 2px 0 0; }
+
+        /* ===== CARDS ===== */
+        .bh-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        .bh-card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .bh-card-title { font-size: 0.88rem; font-weight: 700; color: var(--text-primary); margin: 0; }
+        .bh-card-body { padding: 1.25rem; }
+
+        /* ===== STAT CARDS ===== */
+        .bh-stat {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            display: flex; align-items: center; gap: 1rem;
+            box-shadow: var(--shadow);
+            transition: box-shadow .2s, transform .2s;
+            text-decoration: none; color: inherit;
+        }
+        .bh-stat:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .bh-stat-icon {
+            width: 46px; height: 46px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+        .bh-stat-num { font-size: 1.55rem; font-weight: 800; line-height: 1; color: var(--text-primary); }
+        .bh-stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 3px; }
+
+        /* ===== ALERTS ===== */
+        .bh-alert {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 14px;
+            border-radius: var(--radius);
+            font-size: 0.84rem; margin-bottom: 1.25rem;
+        }
+        .bh-alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+        .bh-alert-error   { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+
+        /* ===== TABLES ===== */
+        .bh-table { width: 100%; border-collapse: collapse; }
+        .bh-table th {
+            font-size: 0.71rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .05em; color: var(--text-muted);
+            padding: 10px 14px; background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        .bh-table td {
+            padding: 11px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.84rem; vertical-align: middle;
+        }
+        .bh-table tbody tr:last-child td { border-bottom: none; }
+        .bh-table tbody tr:hover { background: #fafbfc; }
+
+        /* ===== BUTTONS ===== */
+        .bh-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 7px 14px; border-radius: 7px;
+            font-size: 0.82rem; font-weight: 600;
+            border: none; cursor: pointer; transition: all .15s;
+            text-decoration: none;
+        }
+        .bh-btn-primary { background: var(--brand); color: #fff; }
+        .bh-btn-primary:hover { background: var(--brand-dark); color: #fff; }
+        .bh-btn-ghost {
+            background: transparent; color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+        .bh-btn-ghost:hover { background: var(--bg); color: var(--text-primary); }
+        .bh-btn-sm { padding: 5px 10px; font-size: 0.78rem; }
+        .bh-btn-icon {
+            width: 30px; height: 30px; padding: 0;
+            border-radius: 6px; justify-content: center;
+        }
+
+        /* ===== BADGE ===== */
+        .bh-badge {
+            display: inline-flex; align-items: center;
+            padding: 2px 8px; border-radius: 20px;
+            font-size: 0.7rem; font-weight: 600;
+        }
+
+        /* ===== FOOTER ===== */
+        .bh-footer {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        /* ===== DROPDOWN ===== */
+        .bh-dropdown { position: relative; }
+        .bh-dropdown-menu {
+            position: absolute; right: 0; top: calc(100% + 6px);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            min-width: 200px; z-index: 1060;
+            overflow: hidden;
+            display: none;
+        }
+        .bh-dropdown-menu.show { display: block; }
+        .bh-dropdown-item {
+            display: flex; align-items: center; gap: 9px;
+            padding: 9px 14px;
+            font-size: 0.82rem; color: var(--text-primary);
+            text-decoration: none; cursor: pointer;
+            border: none; background: transparent; width: 100%;
+            transition: background .15s;
+        }
+        .bh-dropdown-item:hover { background: var(--bg); }
+        .bh-dropdown-item.text-danger { color: #dc2626; }
+        .bh-dropdown-divider { border-top: 1px solid var(--border); margin: 4px 0; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 991px) {
+            .bh-sidebar { transform: translateX(-100%); }
+            .bh-sidebar.open { transform: translateX(0); }
+            .bh-main { margin-left: 0; }
+            .bh-brand { display: none; }
+            .bh-mobile-toggle { display: block; }
+            .bh-page-title { font-size: 1.1rem; }
+        }
+        @media (max-width: 575px) {
+            .bh-main { padding: 1rem; }
+            .bh-topbar-center { display: none; }
+        }
+
+        /* OVERLAY for mobile sidebar */
+        .bh-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.35); z-index: 1025;
+        }
+        .bh-overlay.show { display: block; }
+    </style>
+
     @yield('styles')
-</head> 
+</head>
+<body>
 
-<body class="app">   	
-    <header class="app-header fixed-top">	   	            
-        <div class="app-header-inner">  
-	        <div class="container-fluid py-2">
-		        <div class="app-header-content"> 
-		            <div class="row justify-content-between align-items-center">
-			        
-					    <div class="col-auto">
-						    <a id="sidepanel-toggler" class="sidepanel-toggler d-inline-block d-xl-none" href="#">
-							    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" role="img"><title>Menu</title><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg>
-						    </a>
-					    </div><!--//col-->
-			            <div class="search-mobile-trigger d-sm-none col">
-				            <i class="search-mobile-trigger-icon fa-solid fa-magnifying-glass"></i>
-				        </div><!--//col-->
-			            <div class="app-search-box col">
-			                <form class="app-search-form" action="{{ route('dashboard.articles') }}" method="GET">   
-								<input type="text" placeholder="Search articles..." name="search" value="{{ request('search') }}" class="form-control search-input">
-								<button type="submit" class="btn search-btn btn-primary" value="Search"><i class="fa-solid fa-magnifying-glass"></i></button> 
-					        </form>
-			            </div><!--//app-search-box-->
-			            
-			            <div class="app-utilities col-auto">
-				            <div class="app-utility-item app-notifications-dropdown dropdown">    
-					            <a class="dropdown-toggle no-toggle-arrow" id="notifications-dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false" title="Notifications">
-						            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bell icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-									  <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2z"/>
-									  <path fill-rule="evenodd" d="M8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
-									</svg>
-						            <span class="icon-badge">3</span>
-						        </a><!--//dropdown-toggle-->
-						        
-						        <div class="dropdown-menu p-0" aria-labelledby="notifications-dropdown-toggle">
-						            <div class="dropdown-menu-header p-3">
-							            <h5 class="dropdown-menu-title mb-0">Notifications</h5>
-							        </div><!--//dropdown-menu-title-->
-							        <div class="dropdown-menu-content">
-								       <div class="item p-3">
-									        <div class="row gx-2 justify-content-between align-items-center">
-										        <div class="col-auto">
-											       <div class="app-icon-holder">
-												        <i class="fa-solid fa-newspaper text-primary"></i>
-											       </div>
-										        </div>
-										        <div class="col">
-											        <div class="info"> 
-												        <div class="desc">New article "Mastering Blade Templates" published.</div>
-												        <div class="meta"> 2 hrs ago</div>
-											        </div>
-										        </div> 
-									        </div>
-									        <a class="link-mask" href="{{ route('dashboard.notifications') }}"></a>
-								       </div>
-								       <div class="item p-3">
-									        <div class="row gx-2 justify-content-between align-items-center">
-										        <div class="col-auto">
-											        <div class="app-icon-holder icon-holder-mono">
-												        <i class="fa-solid fa-comment text-success"></i>
-											        </div>
-										        </div>
-										        <div class="col">
-											        <div class="info"> 
-												        <div class="desc">You have 5 new comments pending review.</div>
-												        <div class="meta"> 1 day ago</div>
-											        </div>
-										        </div>
-									        </div>
-									        <a class="link-mask" href="{{ route('dashboard.notifications') }}"></a>
-								       </div>
-								    </div>
-							        
-							        <div class="dropdown-menu-footer p-2 text-center">
-								        <a href="{{ route('dashboard.notifications') }}">View all</a>
-							        </div>
-																
-								</div><!--//dropdown-menu-->					        
-					        </div><!--//app-utility-item-->
+{{-- ====== TOPBAR ====== --}}
+<header class="bh-topbar">
+    {{-- Brand --}}
+    <a class="bh-brand" href="{{ route('dashboard.index') }}">
+        <div class="bh-brand-icon"><i class="fa-solid fa-feather-alt"></i></div>
+        <div class="bh-brand-name">Blog<span>Hub</span></div>
+    </a>
 
-				            <div class="app-utility-item">
-					            <a href="{{ route('dashboard.settings') }}" title="Settings">
-						            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-gear icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-									  <path fill-rule="evenodd" d="M8.837 1.626c-.246-.835-1.428-.835-1.674 0l-.094.319A1.873 1.873 0 0 1 4.377 3.06l-.292-.16c-.764-.415-1.6.42-1.184 1.185l.159.292a1.873 1.873 0 0 1-1.115 2.692l-.319.094c-.835.246-.835 1.428 0 1.674l.319.094a1.873 1.873 0 0 1 1.115 2.693l-.16.291c-.415.764.42 1.6 1.185 1.184l.292-.159a1.873 1.873 0 0 1 2.692 1.116l.094.318c.246.835 1.428.835 1.674 0l.094-.319a1.873 1.873 0 0 1 2.693-1.115l.291.16c.764.415 1.6-.42 1.184-1.185l-.159-.291a1.873 1.873 0 0 1 1.116-2.693l.318-.094c.835-.246.835-1.428 0-1.674l-.319-.094a1.873 1.873 0 0 1-1.115-2.692l.16-.292c.415-.764-.42-1.6-1.185-1.184l-.291.159A1.873 1.873 0 0 1 8.93 1.945l-.094-.319zm-2.633-.283c.527-1.79 3.065-1.79 3.592 0l.094.319a.873.873 0 0 0 1.255.52l.292-.16c1.64-.892 3.434.901 2.54 2.541l-.159.292a.873.873 0 0 0 .52 1.255l.319.094c1.79.527 1.79 3.065 0 3.592l-.319.094a.873.873 0 0 0-.52 1.255l.16.292c.893 1.64-.902 3.434-2.541 2.54l-.292-.159a.873.873 0 0 0-1.255.52l-.094.319c-.527 1.79-3.065 1.79-3.592 0l-.094-.319a.873.873 0 0 0-1.255-.52l-.292.16c-1.64.893-3.433-.902-2.54-2.541l.159-.292a.873.873 0 0 0-.52-1.255l-.319-.094c-1.79-.527-1.79-3.065 0-3.592l.319-.094a.873.873 0 0 0 .52-1.255l-.16-.292c-.892-1.64.902-3.433 2.541-2.54l.292.159a.873.873 0 0 0 1.255-.52l.094-.319z"/>
-									  <path fill-rule="evenodd" d="M8 5.754a2.246 2.246 0 1 0 0 4.492 2.246 2.246 0 0 0 0-4.492zM4.754 8a3.246 3.246 0 1 1 6.492 0 3.246 3.246 0 0 1-6.492 0z"/>
-									</svg>
-						            </a>
-					            </div><!--//app-utility-item-->
-				            
-				            <div class="app-utility-item app-user-dropdown dropdown">
-					            <a class="dropdown-toggle" id="user-dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
-                                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" class="rounded-circle" width="36" height="36" alt="user profile">
-                                </a>
-					            <ul class="dropdown-menu" aria-labelledby="user-dropdown-toggle">
-									<li><a class="dropdown-item" href="{{ route('dashboard.account') }}"><i class="fa-solid fa-user me-2"></i> Account</a></li>
-									<li><a class="dropdown-item" href="{{ route('dashboard.settings') }}"><i class="fa-solid fa-gear me-2"></i> Settings</a></li>
-									<li><a class="dropdown-item" href="{{ route('home') }}"><i class="fa-solid fa-globe me-2"></i> View Website</a></li>
-									<li><hr class="dropdown-divider"></li>
-									<li>
-										<a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('admin-logout-form').submit();">
-											<i class="fa-solid fa-right-from-bracket me-2"></i> Log Out
-										</a>
-										<form id="admin-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-											@csrf
-										</form>
-									</li>
-								</ul>
-				            </div><!--//app-user-dropdown--> 
-			            </div><!--//app-utilities-->
-		            </div><!--//row-->
-	            </div><!--//app-header-content-->
-	        </div><!--//container-fluid-->
-        </div><!--//app-header-inner-->
+    {{-- Mobile toggle --}}
+    <button class="bh-mobile-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+        <i class="fa-solid fa-bars"></i>
+    </button>
 
-        <!-- Dashboard Sidebar Component -->
-        @include('backend.components.sidebar')
-    </header>
-    
-    <div class="app-wrapper">
-	    <div class="app-content pt-3 p-md-3 p-lg-4">
-		    <div class="container-xl">
-                @if(session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="fa-solid fa-circle-check me-2"></i> {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-                @if(session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fa-solid fa-triangle-exclamation me-2"></i> {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @yield('content')
-		    </div>
-	    </div>
-	    
-	    <footer class="app-footer">
-		    <div class="container text-center py-3">
-                <small class="copyright">
-                    &copy; {{ date('Y') }} 
-                    @if((auth()->user()->user_type ?? 1) == 1)
-                        BlogHub Admin Panel. Built with Bootstrap 5 &amp; Laravel.
-                    @else
-                        BlogHub Author Studio.
-                    @endif
-                </small>
-		    </div>
-	    </footer>
+    {{-- Search --}}
+    <div class="bh-topbar-center">
+        <form class="bh-search-form" action="{{ route('dashboard.all-articles') }}" method="GET">
+            <i class="fa-solid fa-search search-icon"></i>
+            <input type="text" name="search" placeholder="Search articles..." value="{{ request('search') }}">
+        </form>
     </div>
-  
-    <!-- Javascript -->          
-    <script src="{{ asset('backend/assets/plugins/popper.min.js') }}"></script>
-    <script src="{{ asset('backend/assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>  
 
-    <!-- Charts JS -->
-    <script src="{{ asset('backend/assets/plugins/chart.js/chart.min.js') }}"></script> 
-    
-    <!-- Page Specific JS -->
-    <script src="{{ asset('backend/assets/js/app.js') }}"></script> 
-    @yield('scripts')
+    {{-- Actions --}}
+    <div class="bh-topbar-actions">
+        {{-- View Site --}}
+        <a href="{{ route('home') }}" target="_blank" class="bh-icon-btn" title="View website">
+            <i class="fa-solid fa-globe"></i>
+        </a>
+
+        {{-- Notifications --}}
+        <a href="{{ route('dashboard.notifications') }}" class="bh-icon-btn" title="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="bh-notif-dot"></span>
+        </a>
+
+        {{-- User dropdown --}}
+        <div class="bh-dropdown">
+            <button class="bh-user-btn" id="userDropdownBtn" type="button">
+                <img src="{{ auth()->user()->image ? asset('storage/' . auth()->user()->image) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=C8461F&color=ffffff&bold=true' }}"
+                    alt="{{ auth()->user()->name }}">
+                <div>
+                    <div class="bh-user-name">{{ Str::limit(auth()->user()->name, 18) }}</div>
+                    <div class="bh-user-role">
+                        @if(auth()->user()->user_type == 1) Admin @else Author @endif
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-down ms-1" style="font-size:0.65rem; color:var(--text-light);"></i>
+            </button>
+            <div class="bh-dropdown-menu" id="userDropdownMenu">
+                <a href="{{ route('dashboard.account') }}" class="bh-dropdown-item">
+                    <i class="fa-solid fa-user" style="width:14px;"></i> My Account
+                </a>
+                <a href="{{ route('dashboard.settings') }}" class="bh-dropdown-item">
+                    <i class="fa-solid fa-gear" style="width:14px;"></i> Settings
+                </a>
+                <div class="bh-dropdown-divider"></div>
+                <button class="bh-dropdown-item text-danger"
+                    onclick="document.getElementById('topbar-logout-form').submit()">
+                    <i class="fa-solid fa-right-from-bracket" style="width:14px;"></i> Sign Out
+                </button>
+                <form id="topbar-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+            </div>
+        </div>
+    </div>
+</header>
+
+{{-- Overlay --}}
+<div class="bh-overlay" id="sidebarOverlay"></div>
+
+{{-- ====== SIDEBAR ====== --}}
+@include('backend.components.sidebar')
+
+{{-- ====== MAIN ====== --}}
+<main class="bh-main">
+
+    {{-- Flash messages --}}
+    @if(session('success'))
+    <div class="bh-alert bh-alert-success">
+        <i class="fa-solid fa-circle-check"></i>
+        {{ session('success') }}
+    </div>
+    @endif
+    @if(session('error'))
+    <div class="bh-alert bh-alert-error">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        {{ session('error') }}
+    </div>
+    @endif
+
+    @yield('content')
+
+    <footer class="bh-footer">
+        &copy; {{ date('Y') }} BlogHub.
+        @if((auth()->user()->user_type ?? 1) == 1) Admin Panel @else Author Studio @endif
+        &mdash; Built with Laravel &amp; Bootstrap
+    </footer>
+</main>
+
+{{-- ====== JS ====== --}}
+<script src="{{ asset('backend/assets/plugins/popper.min.js') }}"></script>
+<script src="{{ asset('backend/assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('backend/assets/plugins/chart.js/chart.min.js') }}"></script>
+
+<script>
+// User dropdown
+const userBtn  = document.getElementById('userDropdownBtn');
+const userMenu = document.getElementById('userDropdownMenu');
+if (userBtn && userMenu) {
+    userBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        userMenu.classList.toggle('show');
+    });
+    document.addEventListener('click', () => userMenu.classList.remove('show'));
+}
+
+// Mobile sidebar
+const sidebarToggle  = document.getElementById('sidebarToggle');
+const sidebar        = document.getElementById('bhSidebar');
+const overlay        = document.getElementById('sidebarOverlay');
+if (sidebarToggle && sidebar) {
+    sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+    });
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+    });
+}
+
+// Auto-dismiss alerts
+setTimeout(() => {
+    document.querySelectorAll('.bh-alert').forEach(el => {
+        el.style.transition = 'opacity .4s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 400);
+    });
+}, 4000);
+</script>
+
+@yield('scripts')
 </body>
 </html>

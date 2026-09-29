@@ -23,10 +23,12 @@ class DashboardController extends Controller
         $totalViews = Article::sum('views_count');
         $totalLikes = Article::sum('likes_count');
         $totalComments = Comment::count();
+        $totalUsers = User::count();
+        $totalAuthors = Author::count();
 
         $recentArticles = Article::with(['category', 'author'])
             ->latest()
-            ->take(6)
+            ->take(5)
             ->get();
 
         $categories = Category::withCount('articles')->get();
@@ -36,6 +38,8 @@ class DashboardController extends Controller
             'totalViews',
             'totalLikes',
             'totalComments',
+            'totalUsers',
+            'totalAuthors',
             'recentArticles',
             'categories'
         ));
