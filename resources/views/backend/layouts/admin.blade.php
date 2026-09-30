@@ -193,9 +193,118 @@
             padding: 1px 6px; border-radius: 10px;
         }
 
-        /* Submenu */
-        .bh-nav-submenu { padding-left: 27px; }
-        .bh-nav-submenu .bh-nav-link { font-size: 0.82rem; padding: 6px 10px; }
+        /* ===== SIDEBAR DROPDOWNS ===== */
+        .bh-nav-group {
+            margin-bottom: 2px;
+        }
+        .bh-nav-dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 7px;
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 0.84rem;
+            font-weight: 500;
+            text-align: left;
+            transition: background .15s, color .15s;
+        }
+        .bh-nav-dropdown-toggle:hover {
+            background: var(--bg);
+            color: var(--text-primary);
+        }
+        .bh-nav-dropdown-toggle.active-parent {
+            color: var(--brand);
+            font-weight: 600;
+            background: rgba(200,70,31,0.05);
+        }
+        .bh-nav-dropdown-toggle .nav-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 0.82rem;
+            flex-shrink: 0;
+        }
+        .bh-nav-dropdown-toggle .nav-text {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .bh-nav-dropdown-toggle .nav-chevron {
+            font-size: 0.65rem;
+            color: var(--text-light);
+            margin-left: auto;
+            transition: transform .25s ease, color .15s;
+        }
+        .bh-nav-group.open > .bh-nav-dropdown-toggle .nav-chevron {
+            transform: rotate(180deg);
+            color: var(--brand);
+        }
+        .bh-nav-group.open > .bh-nav-dropdown-toggle {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .bh-nav-dropdown-menu {
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+            padding: 4px 0 6px 10px;
+            margin: 2px 0 4px 17px;
+            border-left: 1.5px solid var(--border);
+        }
+        .bh-nav-group.open > .bh-nav-dropdown-menu {
+            display: flex;
+        }
+
+        .bh-nav-sublink {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.81rem;
+            font-weight: 500;
+            transition: background .15s, color .15s;
+        }
+        .bh-nav-sublink:hover {
+            background: var(--bg);
+            color: var(--text-primary);
+        }
+        .bh-nav-sublink.active {
+            background: var(--brand-light);
+            color: var(--brand);
+            font-weight: 600;
+        }
+        .bh-nav-sublink .sublink-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--text-light);
+            flex-shrink: 0;
+            transition: background .15s, transform .15s;
+        }
+        .bh-nav-sublink:hover .sublink-dot {
+            background: var(--brand);
+            transform: scale(1.2);
+        }
+        .bh-nav-sublink.active .sublink-dot {
+            background: var(--brand);
+            transform: scale(1.3);
+        }
+        .bh-nav-sublink .sublink-badge {
+            margin-left: auto;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 10px;
+        }
 
         /* ===== MAIN CONTENT ===== */
         .bh-main {
@@ -389,6 +498,31 @@
 
     {{-- Actions --}}
     <div class="bh-topbar-actions">
+        {{-- Quick Create Dropdown --}}
+        <div class="bh-dropdown">
+            <button class="bh-btn bh-btn-primary bh-btn-sm" id="topbarCreateBtn" type="button" style="border-radius:8px;">
+                <i class="fa-solid fa-plus"></i> <span class="d-none d-sm-inline">Create</span>
+                <i class="fa-solid fa-chevron-down ms-1" style="font-size:0.6rem; opacity:0.8;"></i>
+            </button>
+            <div class="bh-dropdown-menu" id="topbarCreateMenu" style="min-width: 190px;">
+                <a href="{{ route('blogs.create') }}" class="bh-dropdown-item">
+                    <i class="fa-solid fa-pen-nib text-primary" style="width:16px;"></i> Write Article
+                </a>
+                @if((auth()->user()->user_type ?? 1) == 1)
+                <a href="{{ route('dashboard.website.section', 'topics') }}" class="bh-dropdown-item">
+                    <i class="fa-solid fa-shapes text-success" style="width:16px;"></i> Manage Topics
+                </a>
+                <a href="{{ route('dashboard.website.section', 'authors') }}" class="bh-dropdown-item">
+                    <i class="fa-solid fa-user-pen text-info" style="width:16px;"></i> Manage Authors
+                </a>
+                @endif
+                <div class="bh-dropdown-divider"></div>
+                <a href="{{ route('home') }}" target="_blank" class="bh-dropdown-item">
+                    <i class="fa-solid fa-arrow-up-right-from-square text-muted" style="width:16px;"></i> Visit Website
+                </a>
+            </div>
+        </div>
+
         {{-- View Site --}}
         <a href="{{ route('home') }}" target="_blank" class="bh-icon-btn" title="View website">
             <i class="fa-solid fa-globe"></i>
@@ -469,16 +603,46 @@
 <script src="{{ asset('backend/assets/plugins/chart.js/chart.min.js') }}"></script>
 
 <script>
-// User dropdown
-const userBtn  = document.getElementById('userDropdownBtn');
-const userMenu = document.getElementById('userDropdownMenu');
-if (userBtn && userMenu) {
-    userBtn.addEventListener('click', e => {
-        e.stopPropagation();
-        userMenu.classList.toggle('show');
+// Sidebar collapsible dropdowns
+document.querySelectorAll('.bh-nav-dropdown-toggle').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const parent = this.closest('.bh-nav-group');
+        if (!parent) return;
+
+        const isOpen = parent.classList.contains('open');
+        const menu = parent.querySelector('.bh-nav-dropdown-menu');
+
+        if (isOpen) {
+            parent.classList.remove('open');
+            this.setAttribute('aria-expanded', 'false');
+            if (menu) menu.style.display = 'none';
+        } else {
+            parent.classList.add('open');
+            this.setAttribute('aria-expanded', 'true');
+            if (menu) menu.style.display = 'flex';
+        }
     });
-    document.addEventListener('click', () => userMenu.classList.remove('show'));
-}
+});
+
+// Generic dropdowns (User menu, Create menu)
+document.querySelectorAll('.bh-dropdown').forEach(dropdown => {
+    const btn = dropdown.querySelector('button');
+    const menu = dropdown.querySelector('.bh-dropdown-menu');
+    if (btn && menu) {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const wasOpen = menu.classList.contains('show');
+            document.querySelectorAll('.bh-dropdown-menu.show').forEach(m => m.classList.remove('show'));
+            if (!wasOpen) {
+                menu.classList.add('show');
+            }
+        });
+    }
+});
+document.addEventListener('click', () => {
+    document.querySelectorAll('.bh-dropdown-menu.show').forEach(m => m.classList.remove('show'));
+});
 
 // Mobile sidebar
 const sidebarToggle  = document.getElementById('sidebarToggle');
