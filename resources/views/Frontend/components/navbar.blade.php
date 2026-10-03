@@ -2,17 +2,23 @@
   <div class="container">
     <!-- Brand Logo -->
     <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('home') }}">
-      <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-        <i class="fas fa-feather-alt"></i>
-      </div>
-      <span class="font-heading fw-bold fs-4 text-white">Blog<span class="text-accent" style="color: var(--bh-accent);">Hub</span></span>
+      @if(setting('site_logo'))
+        <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="{{ setting('site_name', 'BlogHub') }}" style="max-height: 38px; width: auto; object-fit: contain;">
+      @else
+        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+          <i class="fas fa-feather-alt"></i>
+        </div>
+      @endif
+      <span class="font-heading fw-bold fs-4 text-white">{{ setting('site_name', 'BlogHub') }}</span>
     </a>
 
     @if(request()->routeIs('login', 'register') || request()->is('login', 'register'))
       <!-- Simplified Navbar for Auth Pages -->
       <div class="d-flex align-items-center gap-2 gap-sm-3">
         @if(request()->routeIs('login') || request()->is('login'))
-          <a href="{{ route('register') }}" class="btn btn-sm btn-bh-accent fw-semibold">Create Account</a>
+          @if(setting('enable_public_registration', true))
+            <a href="{{ route('register') }}" class="btn btn-sm btn-bh-accent fw-semibold">Create Account</a>
+          @endif
         @else
           <a href="{{ route('login') }}" class="btn btn-sm btn-outline-light fw-semibold">Sign In</a>
         @endif
@@ -85,11 +91,13 @@
                       <i class="fas fa-tachometer-alt me-2 text-accent"></i> Dashboard
                     </a>
                   </li>
+                  @if((auth()->user()->user_type ?? 0) == 2)
                   <li>
                     <a class="dropdown-item" href="{{ route('blogs.create') }}">
                       <i class="fas fa-pen-nib me-2 text-accent"></i> Create Article
                     </a>
                   </li>
+                  @endif
                   <li><hr class="dropdown-divider"></li>
                   <li>
                     <form action="{{ route('logout') }}" method="POST" class="d-inline">
@@ -103,7 +111,9 @@
               </div>
             @else
               <a href="{{ route('login') }}" class="btn btn-sm btn-outline-light px-3">Login</a>
-              <a href="{{ route('register') }}" class="btn btn-sm btn-bh-accent px-3">Register</a>
+              @if(setting('enable_public_registration', true))
+                <a href="{{ route('register') }}" class="btn btn-sm btn-bh-accent px-3">Register</a>
+              @endif
             @endauth
           </div>
 

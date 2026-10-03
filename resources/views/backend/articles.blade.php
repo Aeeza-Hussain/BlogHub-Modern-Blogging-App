@@ -1,34 +1,97 @@
 @extends('backend.layouts.admin')
 
-@section('title', 'My Articles — BlogHub')
+@section('title', 'My Posts — Creator Studio')
 
 @section('content')
 
 {{-- Page Header --}}
 <div class="bh-page-header">
     <div>
-        <h1 class="bh-page-title">My Articles</h1>
-        <p class="bh-page-sub">Manage, edit, and track your published articles.</p>
+        <h1 class="bh-page-title"><i class="fa-solid fa-newspaper text-primary me-2"></i>My Posts</h1>
+        <p class="bh-page-sub">Manage, write, revise, and track performance of your stories and articles.</p>
     </div>
-    <a href="{{ route('blogs.create') }}" class="bh-btn bh-btn-primary">
-        <i class="fa-solid fa-plus"></i> Write New
-    </a>
+    <div>
+        <a href="{{ route('blogs.create') }}" class="bh-btn bh-btn-primary">
+            <i class="fa-solid fa-plus me-1"></i> Create New Post
+        </a>
+    </div>
 </div>
 
-{{-- Filters --}}
+{{-- Stats Summary --}}
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-xl">
+        <a href="{{ route('dashboard.articles') }}" class="bh-stat">
+            <div class="bh-stat-icon" style="background:rgba(200,70,31,0.1); color:#C8461F;">
+                <i class="fa-solid fa-newspaper"></i>
+            </div>
+            <div>
+                <div class="bh-stat-num">{{ number_format($totalMyArticles) }}</div>
+                <div class="bh-stat-label">Total Posts</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-6 col-md-4 col-xl">
+        <a href="{{ route('dashboard.articles', ['status' => 'approved']) }}" class="bh-stat">
+            <div class="bh-stat-icon" style="background:rgba(16,185,129,0.1); color:#10b981;">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <div class="bh-stat-num">{{ number_format($publishedCount) }}</div>
+                <div class="bh-stat-label">Published Posts</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-6 col-md-4 col-xl">
+        <a href="{{ route('dashboard.articles', ['status' => 'pending']) }}" class="bh-stat" style="{{ $pendingCount > 0 ? 'border:1.5px solid #f59e0b;' : '' }}">
+            <div class="bh-stat-icon" style="background:rgba(245,158,11,0.1); color:#f59e0b;">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+            <div>
+                <div class="bh-stat-num" style="{{ $pendingCount > 0 ? 'color:#b45309;' : '' }}">{{ number_format($pendingCount) }}</div>
+                <div class="bh-stat-label">Pending Review</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-6 col-md-4 col-xl">
+        <a href="{{ route('dashboard.articles', ['status' => 'draft']) }}" class="bh-stat">
+            <div class="bh-stat-icon" style="background:rgba(107,114,128,0.1); color:#6b7280;">
+                <i class="fa-solid fa-file-pen"></i>
+            </div>
+            <div>
+                <div class="bh-stat-num">{{ number_format($draftCount) }}</div>
+                <div class="bh-stat-label">Draft Posts</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-6 col-md-4 col-xl">
+        <a href="{{ route('dashboard.articles', ['status' => 'rejected']) }}" class="bh-stat" style="{{ $rejectedCount > 0 ? 'border:1.5px solid #ef4444;' : '' }}">
+            <div class="bh-stat-icon" style="background:rgba(239,68,68,0.1); color:#ef4444;">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </div>
+            <div>
+                <div class="bh-stat-num" style="{{ $rejectedCount > 0 ? 'color:#dc2626;' : '' }}">{{ number_format($rejectedCount) }}</div>
+                <div class="bh-stat-label">Needs Revision</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+{{-- Filters Card --}}
 <div class="bh-card mb-4">
-    <div class="bh-card-body" style="padding:0.85rem 1.25rem;">
+    <div class="bh-card-body p-3">
         <form method="GET" action="{{ route('dashboard.articles') }}" class="row g-2 align-items-center">
-            <div class="col-12 col-md-5">
-                <div style="position:relative;">
-                    <i class="fa-solid fa-search" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--text-light); font-size:0.78rem;"></i>
+            <div class="col-12 col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="fa-solid fa-search text-muted"></i>
+                    </span>
                     <input type="text" name="search" value="{{ request('search') }}"
-                        style="width:100%; padding:7px 12px 7px 34px; border:1px solid var(--border); border-radius:7px; font-size:0.84rem; outline:none; background:var(--bg);"
-                        placeholder="Search by title or content...">
+                           class="form-control border-start-0 ps-0"
+                           placeholder="Search your posts by title or summary...">
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <select name="category" class="form-select form-select-sm" onchange="this.form.submit()">
+                <select name="category" class="form-select">
                     <option value="">All Categories</option>
                     @foreach($categories as $cat)
                         <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
@@ -37,15 +100,29 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-3 col-md-2">
-                <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
-                    <option value="" {{ !request('status') ? 'selected' : '' }}>All Status</option>
-                    <option value="featured" {{ request('status') == 'featured' ? 'selected' : '' }}>Featured</option>
-                    <option value="trending" {{ request('status') == 'trending' ? 'selected' : '' }}>Trending</option>
+            <div class="col-6 col-md-2">
+                <select name="status" class="form-select">
+                    <option value="">All Statuses</option>
+                    <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Published ({{ $publishedCount }})</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>In Review ({{ $pendingCount }})</option>
+                    <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft ({{ $draftCount }})</option>
+                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Needs Revision ({{ $rejectedCount }})</option>
                 </select>
             </div>
-            <div class="col-3 col-md-2">
-                <a href="{{ route('dashboard.articles') }}" class="bh-btn bh-btn-ghost bh-btn-sm" style="width:100%; justify-content:center;">Reset</a>
+            <div class="col-6 col-md-1">
+                <select name="sort" class="form-select">
+                    <option value="newest" {{ request('sort','newest') == 'newest' ? 'selected' : '' }}>New</option>
+                    <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Old</option>
+                    <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Top</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-2 d-flex gap-2">
+                <button type="submit" class="bh-btn bh-btn-primary w-100 justify-content-center">
+                    <i class="fa-solid fa-filter me-1"></i> Filter
+                </button>
+                <a href="{{ route('dashboard.articles') }}" class="bh-btn bh-btn-ghost" title="Reset">
+                    <i class="fa-solid fa-arrow-rotate-left"></i>
+                </a>
             </div>
         </form>
     </div>
@@ -53,73 +130,116 @@
 
 {{-- Articles Table --}}
 <div class="bh-card">
-    <div style="overflow-x:auto;">
+    <div class="bh-card-header">
+        <h2 class="bh-card-title"><i class="fa-solid fa-list me-2" style="color:var(--brand);"></i> My Articles List</h2>
+        <span class="text-muted small">Showing {{ $articles->firstItem() ?? 0 }} - {{ $articles->lastItem() ?? 0 }} of {{ $articles->total() }} stories</span>
+    </div>
+
+    <div class="table-responsive">
         <table class="bh-table">
             <thead>
                 <tr>
-                    <th>Article</th>
+                    <th>Post Title</th>
                     <th>Category</th>
-                    <th>Views / Likes</th>
                     <th>Status</th>
-                    <th>Published</th>
-                    <th>Actions</th>
+                    <th>Views</th>
+                    <th>Comments</th>
+                    <th>Created Date</th>
+                    <th>Updated Date</th>
+                    <th class="text-end">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($articles as $article)
-                <tr>
-                    <td style="max-width:300px;">
+                <tr style="{{ $article->status === 'pending' ? 'background:rgba(245,158,11,0.03);' : '' }}">
+                    <td>
                         <div class="d-flex align-items-center gap-3">
-                            <img src="{{ $article->featured_image ?? 'https://ui-avatars.com/api/?name=' . urlencode($article->title) . '&background=C8461F&color=fff' }}"
-                                 class="rounded" style="width:48px; height:36px; object-fit:cover; flex-shrink:0;">
+                            <img src="{{ $article->featured_image }}" alt="{{ $article->title }}"
+                                 style="width:48px; height:36px; border-radius:6px; object-fit:cover; flex-shrink:0;">
                             <div>
-                                <div class="fw-semibold" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px;">
+                                <a href="{{ route('blogs.edit', $article->id) }}" class="fw-semibold text-dark text-decoration-none d-block text-truncate" style="max-width:220px;" title="{{ $article->title }}">
                                     {{ $article->title }}
+                                </a>
+                                <span class="text-muted small"><i class="fa-solid fa-clock me-1"></i>{{ $article->reading_time ?? 5 }} min read</span>
+                                @if($article->status === 'rejected' && $article->rejection_reason)
+                                <div class="text-danger small mt-1 text-truncate" style="max-width:220px;" title="{{ $article->rejection_reason }}">
+                                    <i class="fa-solid fa-triangle-exclamation me-1"></i><strong>Admin feedback:</strong> {{ $article->rejection_reason }}
                                 </div>
-                                <div style="font-size:0.75rem; color:var(--text-light);">
-                                    <i class="fa-solid fa-clock me-1"></i>{{ $article->reading_time ?? '—' }} min read
-                                </div>
+                                @endif
                             </div>
                         </div>
                     </td>
                     <td>
-                        <span class="bh-badge" style="background:{{ ($article->category->color ?? '#C8461F') }}15; color:{{ $article->category->color ?? '#C8461F' }};">
-                            {{ $article->category->name ?? '—' }}
+                        <span class="badge bg-light text-dark border">
+                            {{ $article->category?->name ?? 'General' }}
                         </span>
                     </td>
                     <td>
-                        <div style="font-size:0.82rem;">
-                            <i class="fa-solid fa-eye me-1" style="color:#2563eb; opacity:.6;"></i>{{ number_format($article->views_count) }}
-                        </div>
-                        <div style="font-size:0.78rem; color:var(--text-light);">
-                            <i class="fa-solid fa-heart me-1" style="color:#dc2626; opacity:.6;"></i>{{ number_format($article->likes_count) }}
-                        </div>
-                    </td>
-                    <td>
-                        @if($article->is_featured)
-                            <span class="bh-badge" style="background:rgba(16,185,129,0.1); color:#10b981;">Featured</span>
-                        @elseif($article->is_trending)
-                            <span class="bh-badge" style="background:rgba(245,158,11,0.1); color:#f59e0b;">Trending</span>
-                        @else
-                            <span class="bh-badge" style="background:rgba(100,116,139,0.1); color:#64748b;">Published</span>
+                        @if($article->status === 'approved')
+                            <span class="bh-badge" style="background:#dcfce7; color:#15803d;">
+                                <i class="fa-solid fa-circle-check me-1"></i> Published
+                            </span>
+                        @elseif($article->status === 'pending')
+                            <span class="bh-badge" style="background:#fef3c7; color:#b45309;">
+                                <i class="fa-solid fa-clock me-1"></i> In Review
+                            </span>
+                        @elseif($article->status === 'draft')
+                            <span class="bh-badge" style="background:#f3f4f6; color:#4b5563;">
+                                <i class="fa-solid fa-file-pen me-1"></i> Draft
+                            </span>
+                        @elseif($article->status === 'rejected')
+                            <span class="bh-badge" style="background:#fee2e2; color:#dc2626;">
+                                <i class="fa-solid fa-circle-xmark me-1"></i> Needs Revision
+                            </span>
                         @endif
                     </td>
-                    <td style="color:var(--text-muted); white-space:nowrap;">{{ $article->created_at->format('M d, Y') }}</td>
                     <td>
-                        <div class="d-flex gap-1">
-                            <a href="{{ route('blogs.show', $article->slug) }}" target="_blank"
-                               class="bh-btn bh-btn-ghost bh-btn-icon bh-btn-sm" title="View">
-                                <i class="fa-solid fa-eye"></i>
+                        <span class="small fw-semibold text-muted">
+                            <i class="fa-regular fa-eye me-1 text-primary"></i>{{ number_format($article->views_count) }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="small fw-semibold text-muted">
+                            <i class="fa-regular fa-comments me-1 text-success"></i>{{ $article->allComments()->count() }}
+                        </span>
+                    </td>
+                    <td class="text-muted small">
+                        {{ $article->created_at->format('M d, Y') }}
+                    </td>
+                    <td class="text-muted small">
+                        {{ $article->updated_at->format('M d, Y') }}
+                    </td>
+                    <td class="text-end">
+                        <div class="d-inline-flex align-items-center gap-1">
+                            {{-- View if published --}}
+                            @if($article->status === 'approved')
+                            <a href="{{ route('blogs.show', $article->slug) }}" target="_blank" class="bh-btn bh-btn-ghost bh-btn-icon bh-btn-sm" title="View Published Story">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </a>
-                            <a href="{{ route('blogs.edit', $article->id) }}"
-                               class="bh-btn bh-btn-ghost bh-btn-icon bh-btn-sm" title="Edit" style="color:#2563eb;">
+                            @endif
+
+                            {{-- Edit --}}
+                            <a href="{{ route('blogs.edit', $article->id) }}" class="bh-btn bh-btn-ghost bh-btn-icon bh-btn-sm" title="Edit Story">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
+
+                            {{-- Submit for Review if draft or rejected --}}
+                            @if(in_array($article->status, ['draft', 'rejected']))
+                            <form action="{{ route('dashboard.articles.submit-review', $article->id) }}" method="POST" class="d-inline"
+                                  onsubmit="return confirm('Submit this story for administrator editorial review?');">
+                                @csrf
+                                <button type="submit" class="bh-btn bh-btn-sm" style="background:#dbeafe; color:#1d4ed8;" title="Submit for Review">
+                                    <i class="fa-solid fa-paper-plane me-1"></i> Submit
+                                </button>
+                            </form>
+                            @endif
+
+                            {{-- Delete --}}
                             <form action="{{ route('dashboard.articles.delete', $article->id) }}" method="POST" class="d-inline"
-                                  onsubmit="return confirm('Delete this article permanently?')">
+                                  onsubmit="return confirm('Are you sure you want to delete this story?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="bh-btn bh-btn-ghost bh-btn-icon bh-btn-sm" title="Delete" style="color:#dc2626;">
+                                <button type="submit" class="bh-btn bh-btn-ghost bh-btn-icon bh-btn-sm text-danger" title="Delete Story">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </form>
@@ -128,9 +248,14 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" style="text-align:center; padding:3rem; color:var(--text-light);">
-                        <i class="fa-solid fa-pen-nib" style="font-size:1.8rem; opacity:.2; display:block; margin-bottom:.6rem;"></i>
-                        No articles yet. <a href="{{ route('blogs.create') }}" style="color:var(--brand);">Write your first article →</a>
+                    <td colspan="8" class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-pen-nib fa-2x mb-2 d-block text-secondary"></i>
+                        No stories found matching your filter criteria.
+                        <div class="mt-2">
+                            <a href="{{ route('blogs.create') }}" class="bh-btn bh-btn-primary bh-btn-sm">
+                                <i class="fa-solid fa-plus me-1"></i> Create New Post
+                            </a>
+                        </div>
                     </td>
                 </tr>
                 @endforelse
@@ -139,7 +264,7 @@
     </div>
 
     @if($articles->hasPages())
-    <div style="padding:0.75rem 1.25rem; border-top:1px solid var(--border); display:flex; justify-content:center;">
+    <div class="bh-card-body border-top p-3 d-flex justify-content-end">
         {{ $articles->links() }}
     </div>
     @endif

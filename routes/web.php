@@ -26,8 +26,12 @@ Route::middleware(['auth', 'can.publish'])->group(function () {
     Route::post('/blogs', [ArticleController::class, 'store'])->name('blogs.store');
     Route::get('/blogs/{id}/edit', [ArticleController::class, 'edit'])->name('blogs.edit');
     Route::put('/blogs/{id}', [ArticleController::class, 'update'])->name('blogs.update');
-    Route::post('/blogs/{id}/like', [ArticleController::class, 'like'])->name('blogs.like');
+});
+
+// Authenticated User Actions (Commenting & Liking for registered users)
+Route::middleware('auth')->group(function () {
     Route::post('/blogs/{id}/comments', [ArticleController::class, 'storeComment'])->name('blogs.comments.store');
+    Route::post('/blogs/{id}/like', [ArticleController::class, 'like'])->name('blogs.like');
 });
 
 // Logout only requires auth, NOT can.publish
@@ -48,6 +52,7 @@ Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'storeContact'])->name('contact.store');
 Route::get('/privacy-policy', [PageController::class, 'privacy'])->name('privacy');
 Route::get('/terms-and-conditions', [PageController::class, 'terms'])->name('terms');
+Route::post('/newsletter/subscribe', [PageController::class, 'subscribeNewsletter'])->name('newsletter.subscribe');
 
 // Auth Flow Routes (Guest accessible)
 Route::middleware('guest')->group(function () {
@@ -66,7 +71,6 @@ Route::middleware('auth')->group(function () {
             Route::get('/articles', [DashboardController::class, 'articles'])->name('dashboard.articles');
             Route::get('/charts', [DashboardController::class, 'charts'])->name('dashboard.charts');
             Route::get('/account', [DashboardController::class, 'account'])->name('dashboard.account');
-            Route::get('/settings', [DashboardController::class, 'settings'])->name('dashboard.settings');
             Route::get('/notifications', [DashboardController::class, 'notifications'])->name('dashboard.notifications');
             Route::get('/help', [DashboardController::class, 'help'])->name('dashboard.help');
             Route::get('/website', [DashboardController::class, 'website'])->name('dashboard.website');
@@ -76,9 +80,22 @@ Route::middleware('auth')->group(function () {
             Route::delete('/articles/{id}', [DashboardController::class, 'deleteArticle'])
                 ->middleware('can.publish')
                 ->name('dashboard.articles.delete');
+            Route::post('/articles/{id}/submit-review', [DashboardController::class, 'submitArticleForReview'])
+                ->middleware('can.publish')
+                ->name('dashboard.articles.submit-review');
 
-            // Admin-only website configuration
+            // Profile, Password & Notifications Updates (Admin & Author)
+            Route::post('/account/profile', [DashboardController::class, 'updateProfile'])->name('dashboard.account.profile');
+            Route::post('/account/password', [DashboardController::class, 'updatePassword'])->name('dashboard.account.password');
+            Route::post('/account/notifications', [DashboardController::class, 'updateNotificationPreferences'])->name('dashboard.account.notifications');
+
+            // Admin-only management
             Route::middleware('admin')->group(function () {
+                // Platform Settings
+                Route::get('/settings', [DashboardController::class, 'settings'])->name('dashboard.settings');
+                Route::post('/settings', [DashboardController::class, 'updateSettings'])->name('dashboard.settings.update');
+
+                // Website Layout & Portions
                 Route::post('/website/hero', [DashboardController::class, 'updateHeroSettings'])->name('dashboard.website.hero.update');
                 Route::post('/website/trending/{id}/toggle', [DashboardController::class, 'toggleTrending'])->name('dashboard.website.trending.toggle');
                 Route::post('/website/categories', [DashboardController::class, 'storeCategory'])->name('dashboard.website.categories.store');
@@ -90,15 +107,37 @@ Route::middleware('auth')->group(function () {
 
                 // User Management
                 Route::get('/users', [DashboardController::class, 'users'])->name('dashboard.users');
+                Route::put('/users/{id}', [DashboardController::class, 'updateUser'])->name('dashboard.users.update');
                 Route::put('/users/{id}/type', [DashboardController::class, 'updateUserType'])->name('dashboard.users.type');
+                Route::post('/users/{id}/toggle-status', [DashboardController::class, 'toggleUserStatus'])->name('dashboard.users.toggle-status');
                 Route::delete('/users/{id}', [DashboardController::class, 'deleteUser'])->name('dashboard.users.delete');
 
-                // Admin: All Articles
-                Route::get('/all-articles', [DashboardController::class, 'allArticles'])->name('dashboard.all-articles');
-                Route::delete('/all-articles/{id}', [DashboardController::class, 'adminDeleteArticle'])->name('dashboard.all-articles.delete');
+                // Author Management
+                Route::get('/authors', [DashboardController::class, 'authors'])->name('dashboard.authors');
+                Route::post('/authors', [DashboardController::class, 'storeAuthor'])->name('dashboard.authors.store');
+                Route::put('/authors/{id}', [DashboardController::class, 'updateAuthor'])->name('dashboard.authors.update');
+                Route::post('/authors/{id}/toggle-status', [DashboardController::class, 'toggleAuthorStatus'])->name('dashboard.authors.toggle-status');
+                Route::delete('/authors/{id}', [DashboardController::class, 'deleteAuthor'])->name('dashboard.authors.delete');
 
-                // Comments Management
+                // Category Management
+                Route::get('/categories', [DashboardController::class, 'categories'])->name('dashboard.categories');
+                Route::post('/categories', [DashboardController::class, 'storeCategory'])->name('dashboard.categories.store');
+                Route::put('/categories/{id}', [DashboardController::class, 'updateCategory'])->name('dashboard.categories.update');
+                Route::delete('/categories/{id}', [DashboardController::class, 'deleteCategory'])->name('dashboard.categories.delete');
+
+                // Admin: All Articles & Moderation
+                Route::get('/all-articles', [DashboardController::class, 'allArticles'])->name('dashboard.all-articles');
+                Route::post('/articles/{id}/approve', [DashboardController::class, 'approveArticle'])->name('dashboard.articles.approve');
+                Route::post('/articles/{id}/reject', [DashboardController::class, 'rejectArticle'])->name('dashboard.articles.reject');
+                Route::post('/articles/{id}/unpublish', [DashboardController::class, 'unpublishArticle'])->name('dashboard.articles.unpublish');
+                Route::delete('/all-articles/{id}', [DashboardController::class, 'adminDeleteArticle'])->name('dashboard.all-articles.delete');
+            });
+
+            // Comments Management (Authors manage comments on their own articles; Admins manage all)
+            Route::middleware('can.publish')->group(function () {
                 Route::get('/comments', [DashboardController::class, 'comments'])->name('dashboard.comments');
+                Route::post('/comments/{id}/approve', [DashboardController::class, 'approveComment'])->name('dashboard.comments.approve');
+                Route::post('/comments/{id}/hide', [DashboardController::class, 'hideComment'])->name('dashboard.comments.hide');
                 Route::delete('/comments/{id}', [DashboardController::class, 'deleteComment'])->name('dashboard.comments.delete');
             });
         });

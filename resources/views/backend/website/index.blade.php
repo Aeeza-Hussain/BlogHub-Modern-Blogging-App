@@ -17,9 +17,6 @@
             <a class="btn app-btn-secondary" href="{{ route('home') }}" target="_blank">
                 <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> View Live Homepage
             </a>
-            <a class="btn app-btn-primary" href="{{ route('blogs.create') }}">
-                <i class="fa-solid fa-pen-nib me-1"></i> Write New Article
-            </a>
         </div>
     </div>
 </div>
@@ -479,10 +476,7 @@
         </div>
         <div class="d-flex align-items-center gap-2">
             <span class="badge bg-info fs-6">{{ $totalArticles }} Total Articles</span>
-            <a href="{{ route('blogs.create') }}" class="btn btn-sm btn-info text-white">
-                <i class="fa-solid fa-plus me-1"></i> Write New Story
-            </a>
-            <a href="{{ route('dashboard.articles') }}" class="btn btn-sm app-btn-secondary">
+            <a href="{{ route('dashboard.all-articles') }}" class="btn btn-sm app-btn-secondary">
                 <i class="fa-solid fa-list me-1"></i> Full Articles Table
             </a>
         </div>

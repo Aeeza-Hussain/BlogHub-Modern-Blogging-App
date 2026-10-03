@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Author;
 use App\Models\ContactMessage;
+use App\Models\Subscriber;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -41,5 +42,35 @@ class PageController extends Controller
     public function terms()
     {
         return view('legal.terms');
+    }
+
+    public function subscribeNewsletter(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|max:150',
+        ]);
+
+        $existing = Subscriber::where('email', $validated['email'])->first();
+
+        if ($existing) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status' => 'info',
+                    'message' => 'You are already subscribed to our newsletter! ✨'
+                ]);
+            }
+            return redirect()->back()->with('status', 'You are already subscribed to our newsletter! ✨');
+        }
+
+        Subscriber::create(['email' => $validated['email']]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Thank you for subscribing! You will receive our latest digests. 🎉'
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Thank you for subscribing to our newsletter! 🎉');
     }
 }

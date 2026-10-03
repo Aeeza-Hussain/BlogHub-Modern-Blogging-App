@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class HomeSetting extends Model
 {
     protected $fillable = [
+        'site_name',
+        'site_description',
+        'auto_approve_comments',
+        'auto_approve_posts',
+        'allow_author_registration',
         'hero_badge',
         'hero_heading',
         'hero_description',
@@ -16,6 +21,12 @@ class HomeSetting extends Model
         'promo_btn_text',
         'promo_btn_url',
         'featured_article_id',
+    ];
+
+    protected $casts = [
+        'auto_approve_comments' => 'boolean',
+        'auto_approve_posts' => 'boolean',
+        'allow_author_registration' => 'boolean',
     ];
 
     public function featuredArticle()

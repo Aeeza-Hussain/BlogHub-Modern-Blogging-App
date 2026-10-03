@@ -20,12 +20,18 @@ class Author extends Model
         'specialty',
         'followers_count',
         'following_count',
+        'is_active',
+        'twitter',
+        'linkedin',
+        'github',
+        'website',
     ];
 
     protected function casts(): array
     {
         return [
             'user_id' => 'integer',
+            'is_active' => 'boolean',
         ];
     }
 

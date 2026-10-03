@@ -7,6 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    @if(setting('site_favicon'))
+    <link rel="icon" href="{{ asset('storage/' . setting('site_favicon')) }}">
+    @endif
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -18,8 +22,8 @@
 
     <style>
         :root {
-            --brand:        #C8461F;
-            --brand-dark:   #a3360f;
+            --brand:        {{ setting('primary_color', '#C8461F') }};
+            --brand-dark:   {{ setting('primary_color', '#a3360f') }};
             --brand-light:  rgba(200,70,31,0.08);
             --sidebar-w:    256px;
             --header-h:     60px;
@@ -479,8 +483,12 @@
 <header class="bh-topbar">
     {{-- Brand --}}
     <a class="bh-brand" href="{{ route('dashboard.index') }}">
-        <div class="bh-brand-icon"><i class="fa-solid fa-feather-alt"></i></div>
-        <div class="bh-brand-name">Blog<span>Hub</span></div>
+        @if(setting('site_logo'))
+            <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="Logo" style="height: 30px; width: auto; object-fit: contain; margin-right: 8px;">
+        @else
+            <div class="bh-brand-icon"><i class="fa-solid fa-feather-alt"></i></div>
+        @endif
+        <div class="bh-brand-name">{{ setting('site_name', 'BlogHub') }}</div>
     </a>
 
     {{-- Mobile toggle --}}
@@ -498,30 +506,12 @@
 
     {{-- Actions --}}
     <div class="bh-topbar-actions">
-        {{-- Quick Create Dropdown --}}
-        <div class="bh-dropdown">
-            <button class="bh-btn bh-btn-primary bh-btn-sm" id="topbarCreateBtn" type="button" style="border-radius:8px;">
-                <i class="fa-solid fa-plus"></i> <span class="d-none d-sm-inline">Create</span>
-                <i class="fa-solid fa-chevron-down ms-1" style="font-size:0.6rem; opacity:0.8;"></i>
-            </button>
-            <div class="bh-dropdown-menu" id="topbarCreateMenu" style="min-width: 190px;">
-                <a href="{{ route('blogs.create') }}" class="bh-dropdown-item">
-                    <i class="fa-solid fa-pen-nib text-primary" style="width:16px;"></i> Write Article
-                </a>
-                @if((auth()->user()->user_type ?? 1) == 1)
-                <a href="{{ route('dashboard.website.section', 'topics') }}" class="bh-dropdown-item">
-                    <i class="fa-solid fa-shapes text-success" style="width:16px;"></i> Manage Topics
-                </a>
-                <a href="{{ route('dashboard.website.section', 'authors') }}" class="bh-dropdown-item">
-                    <i class="fa-solid fa-user-pen text-info" style="width:16px;"></i> Manage Authors
-                </a>
-                @endif
-                <div class="bh-dropdown-divider"></div>
-                <a href="{{ route('home') }}" target="_blank" class="bh-dropdown-item">
-                    <i class="fa-solid fa-arrow-up-right-from-square text-muted" style="width:16px;"></i> Visit Website
-                </a>
-            </div>
-        </div>
+        {{-- Quick Action for Authors (Write Article) --}}
+        @if((auth()->user()->user_type ?? 1) == 2)
+        <a href="{{ route('blogs.create') }}" class="bh-btn bh-btn-primary bh-btn-sm" style="border-radius:8px;">
+            <i class="fa-solid fa-pen-nib me-1"></i> <span class="d-none d-sm-inline">Write Article</span>
+        </a>
+        @endif
 
         {{-- View Site --}}
         <a href="{{ route('home') }}" target="_blank" class="bh-icon-btn" title="View website">
@@ -591,7 +581,7 @@
     @yield('content')
 
     <footer class="bh-footer">
-        &copy; {{ date('Y') }} BlogHub.
+        &copy; {{ date('Y') }} {{ setting('site_name', 'BlogHub') }}.
         @if((auth()->user()->user_type ?? 1) == 1) Admin Panel @else Author Studio @endif
         &mdash; Built with Laravel &amp; Bootstrap
     </footer>

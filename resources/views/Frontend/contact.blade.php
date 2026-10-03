@@ -35,7 +35,7 @@
               </div>
               <div>
                 <h6 class="font-heading fw-bold mb-0 text-white">Email Us</h6>
-                <span class="small text-light-50">support@bloghub.com</span>
+                <span class="small text-light-50"><a href="mailto:{{ setting('contact_email', 'contact@bloghub.com') }}" class="text-white text-decoration-none">{{ setting('contact_email', 'contact@bloghub.com') }}</a></span>
               </div>
             </div>
 

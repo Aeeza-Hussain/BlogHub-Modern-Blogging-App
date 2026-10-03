@@ -10,7 +10,7 @@ class AuthorController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Author::withCount('articles');
+        $query = Author::withCount(['articles' => fn($q) => $q->where('status', Article::STATUS_APPROVED)]);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -24,10 +24,10 @@ class AuthorController extends Controller
 
     public function show($slug)
     {
-        $author = Author::withCount('articles')->where('slug', $slug)->firstOrFail();
-        $articles = Article::with(['category', 'author'])
+        $author = Author::withCount(['articles' => fn($q) => $q->where('status', Article::STATUS_APPROVED)])->where('slug', $slug)->firstOrFail();
+        $articles = Article::approved()->with(['category', 'author'])
             ->where('author_id', $author->id)
-            ->latest()
+            ->latest('published_at')
             ->paginate(6);
 
         return view('authors.show', compact('author', 'articles'));

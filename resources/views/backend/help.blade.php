@@ -15,8 +15,9 @@
 {{-- Quick Guide Cards --}}
 <div class="row g-3 mb-4">
     @php
+        $isAdmin = (auth()->user()->user_type ?? 1) == 1;
         $guides = [
-            ['Managing Articles', 'Create, edit, categorize, and feature articles. Support for featured images, tags, and rich content.', 'fa-pen-nib', '#C8461F', route('blogs.create'), 'Write Article'],
+            ['Managing Articles', 'Review, moderate, approve, or categorize articles submitted by platform authors.', 'fa-newspaper', '#C8461F', $isAdmin ? route('dashboard.all-articles') : route('dashboard.articles'), $isAdmin ? 'Manage Articles' : 'My Articles'],
             ['Analytics & Stats', 'Track reader traffic, view counts, likes, and engagement using interactive charts and graphs.', 'fa-chart-line', '#10b981', route('dashboard.charts'), 'View Analytics'],
             ['Website Sections', 'Customize your homepage hero, trending articles, categories, and author profiles.', 'fa-globe', '#2563eb', route('dashboard.website'), 'Manage Website'],
             ['User Management', 'View, promote, demote, or remove platform users and authors.', 'fa-users-gear', '#8b5cf6', route('dashboard.users'), 'Manage Users'],

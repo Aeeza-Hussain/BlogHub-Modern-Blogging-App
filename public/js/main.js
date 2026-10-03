@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initStatsCounters();
   initGridListToggle();
   initLiveSearch();
+  initNewsletterSubscription();
 });
 
 /* 1. Dark Mode Toggle & Persistence */
@@ -356,3 +357,111 @@ function escapeHtml(text) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
   });
 }
+
+/* 12. Newsletter Subscription Handling */
+function initNewsletterSubscription() {
+  const form = document.getElementById('bh-newsletter-form');
+  if (!form) return;
+
+  const emailInput = document.getElementById('bh-newsletter-email');
+  const submitBtn = document.getElementById('bh-newsletter-btn');
+  const alertBox = document.getElementById('bh-newsletter-alert');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!emailInput) return;
+
+    const email = emailInput.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Reset feedback states
+    if (alertBox) {
+      alertBox.className = 'd-none alert py-2 px-3 small mb-2 border-0 rounded-3';
+      alertBox.textContent = '';
+      alertBox.style.cssText = '';
+    }
+    emailInput.classList.remove('is-invalid');
+
+    if (!email || !emailRegex.test(email)) {
+      emailInput.classList.add('is-invalid');
+      if (alertBox) {
+        alertBox.className = 'alert alert-danger py-2 px-3 small mb-2 border-0 rounded-3 text-white';
+        alertBox.style.backgroundColor = 'rgba(239, 68, 68, 0.25)';
+        alertBox.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+        alertBox.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i> Please enter a valid email address.';
+      }
+      return;
+    }
+
+    // Set loading state
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnSpinner = submitBtn.querySelector('.btn-spinner');
+    if (btnText && btnSpinner) {
+      btnText.classList.add('d-none');
+      btnSpinner.classList.remove('d-none');
+    }
+    submitBtn.disabled = true;
+
+    // Get CSRF Token
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') 
+      || form.querySelector('input[name="_token"]')?.value 
+      || '';
+
+    try {
+      const response = await fetch(form.action, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ email: email })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.status === 'success') {
+        if (alertBox) {
+          alertBox.className = 'alert alert-success py-2 px-3 small mb-2 border-0 rounded-3 text-white';
+          alertBox.style.backgroundColor = 'rgba(16, 185, 129, 0.25)';
+          alertBox.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+          alertBox.innerHTML = `<i class="fas fa-check-circle me-1"></i> ${escapeHtml(data.message)}`;
+        }
+        showToast(data.message, 'success');
+        form.reset();
+      } else if (data.status === 'info') {
+        if (alertBox) {
+          alertBox.className = 'alert alert-info py-2 px-3 small mb-2 border-0 rounded-3 text-white';
+          alertBox.style.backgroundColor = 'rgba(59, 130, 246, 0.25)';
+          alertBox.style.border = '1px solid rgba(59, 130, 246, 0.4)';
+          alertBox.innerHTML = `<i class="fas fa-info-circle me-1"></i> ${escapeHtml(data.message)}`;
+        }
+        showToast(data.message, 'info');
+      } else {
+        const errorMsg = data.errors?.email?.[0] || data.message || 'Subscription failed. Please check your email.';
+        if (alertBox) {
+          alertBox.className = 'alert alert-danger py-2 px-3 small mb-2 border-0 rounded-3 text-white';
+          alertBox.style.backgroundColor = 'rgba(239, 68, 68, 0.25)';
+          alertBox.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          alertBox.innerHTML = `<i class="fas fa-exclamation-circle me-1"></i> ${escapeHtml(errorMsg)}`;
+        }
+        showToast(errorMsg, 'danger');
+      }
+    } catch (err) {
+      if (alertBox) {
+        alertBox.className = 'alert alert-danger py-2 px-3 small mb-2 border-0 rounded-3 text-white';
+        alertBox.style.backgroundColor = 'rgba(239, 68, 68, 0.25)';
+        alertBox.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+        alertBox.innerHTML = '<i class="fas fa-triangle-exclamation me-1"></i> Network error. Please try again later.';
+      }
+      showToast('Network error. Please try again later.', 'danger');
+    } finally {
+      if (btnText && btnSpinner) {
+        btnText.classList.remove('d-none');
+        btnSpinner.classList.add('d-none');
+      }
+      submitBtn.disabled = false;
+    }
+  });
+}
+

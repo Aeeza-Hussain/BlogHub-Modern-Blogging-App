@@ -22,25 +22,25 @@ class HomeController extends Controller
 
         // Hero / Featured article
         $heroArticle = null;
-        if ($homeSetting && $homeSetting->featured_article_id && $homeSetting->featuredArticle) {
+        if ($homeSetting && $homeSetting->featured_article_id && $homeSetting->featuredArticle && $homeSetting->featuredArticle->isApproved()) {
             $heroArticle = $homeSetting->featuredArticle;
         } else {
-            $heroArticle = Article::with(['category', 'author'])
+            $heroArticle = Article::approved()->with(['category', 'author'])
                 ->where('is_featured', true)
                 ->latest('published_at')
                 ->first();
 
             if (!$heroArticle) {
-                $heroArticle = Article::with(['category', 'author'])
-                    ->latest()
+                $heroArticle = Article::approved()->with(['category', 'author'])
+                    ->latest('published_at')
                     ->first();
             }
         }
 
         $excludedIds = $heroArticle ? [$heroArticle->id] : [];
 
-        // 2. Trending articles (Strictly articles marked is_trending from Dashboard)
-        $trendingArticles = Article::with(['category', 'author'])
+        // 2. Trending articles (Strictly approved articles marked is_trending)
+        $trendingArticles = Article::approved()->with(['category', 'author'])
             ->whereNotIn('id', $excludedIds)
             ->where('is_trending', true)
             ->latest('published_at')
@@ -48,7 +48,7 @@ class HomeController extends Controller
             ->get();
             
         if ($trendingArticles->count() < 4) {
-            $moreTrending = Article::with(['category', 'author'])
+            $moreTrending = Article::approved()->with(['category', 'author'])
                 ->whereNotIn('id', $excludedIds)
                 ->whereNotIn('id', $trendingArticles->pluck('id')->toArray())
                 ->orderBy('views_count', 'desc')
@@ -59,26 +59,26 @@ class HomeController extends Controller
         }
 
         // 3. Latest published articles for main section grid
-        $latestArticles = Article::with(['category', 'author'])
+        $latestArticles = Article::approved()->with(['category', 'author'])
             ->whereNotIn('id', $excludedIds)
             ->whereNotIn('id', $trendingArticles->pluck('id')->toArray())
             ->latest('published_at')
             ->take(6)
             ->get();
 
-        // 4. Categories with article count
-        $categories = Category::withCount('articles')->get();
+        // 4. Categories with approved article count
+        $categories = Category::withCount(['articles' => fn($q) => $q->where('status', Article::STATUS_APPROVED)])->get();
 
-        // 5. Authors with article count
-        $featuredAuthors = Author::withCount('articles')
+        // 5. Authors with approved article count
+        $featuredAuthors = Author::withCount(['articles' => fn($q) => $q->where('status', Article::STATUS_APPROVED)])
             ->orderBy('articles_count', 'desc')
             ->take(8)
             ->get();
 
         // Stats counter
         $stats = [
-            'total_articles' => Article::count(),
-            'total_views' => Article::sum('views_count'),
+            'total_articles' => Article::approved()->count(),
+            'total_views' => Article::approved()->sum('views_count'),
             'total_authors' => Author::count(),
             'total_categories' => Category::count(),
         ];

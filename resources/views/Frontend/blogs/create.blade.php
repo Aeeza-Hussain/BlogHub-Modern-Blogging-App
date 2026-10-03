@@ -104,15 +104,25 @@
               <div class="invalid-feedback">Article body content is required.</div>
             </div>
 
-            <div class="row align-items-center">
-              <div class="col-md-6 mb-3 mb-md-0">
+            <div class="mb-4">
+              <label for="tags" class="form-label font-mono fw-semibold">Tags / Keywords</label>
+              <input type="text" name="tags" id="tags" value="{{ old('tags') }}" class="form-control @error('tags') is-invalid @enderror" placeholder="e.g. Technology, Web Development, Laravel (comma-separated)">
+              @error('tags') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+              <div class="form-text small">Add relevant tags separated by commas to help readers find your story.</div>
+            </div>
+
+            <div class="row align-items-center mt-4">
+              <div class="col-md-5 mb-3 mb-md-0">
                 <label for="reading_time" class="form-label font-mono fw-semibold">Estimated Reading Time (Minutes)</label>
                 <input type="number" name="reading_time" id="reading_time" value="{{ old('reading_time', 5) }}" class="form-control @error('reading_time') is-invalid @enderror" min="1" max="60">
                 @error('reading_time') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
               </div>
-              <div class="col-md-6 text-end">
-                <button type="submit" class="btn btn-bh-accent btn-lg w-100 w-md-auto">
-                  <i class="fas fa-paper-plane me-2"></i> Publish Article
+              <div class="col-md-7 text-md-end d-flex gap-2 justify-content-md-end">
+                <button type="submit" name="action" value="draft" class="btn btn-outline-secondary btn-lg">
+                  <i class="fa-solid fa-file-pen me-2"></i> Save as Draft
+                </button>
+                <button type="submit" name="action" value="submit" class="btn btn-bh-accent btn-lg">
+                  <i class="fa-solid fa-paper-plane me-2"></i> Submit for Review
                 </button>
               </div>
             </div>

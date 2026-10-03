@@ -75,6 +75,10 @@ class AuthController extends Controller
 
     public function showRegister()
     {
+        if (!setting('enable_public_registration', true)) {
+            return redirect()->route('login')->with('error', 'Public user registration is currently paused by the platform administrator.');
+        }
+
         $niches = [
             [
                 'id' => 'ai',
@@ -167,6 +171,10 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        if (!setting('enable_public_registration', true)) {
+            return redirect()->route('login')->with('error', 'Public user registration is currently paused.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'email' => 'required|email|max:150|unique:users,email',
@@ -195,11 +203,16 @@ class AuthController extends Controller
             $imagePath = $request->file('image')->store('avatars', 'public');
         }
 
+        $requireApproval = (bool) setting('require_author_approval', false);
+        $defaultRole = setting('default_user_role', 'author');
+
+        $assignedUserType = ($defaultRole === 'author' && !$requireApproval) ? 2 : 0;
+
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'user_type' => 2,
+            'user_type' => $assignedUserType,
             'contact' => $validated['contact'] ?? null,
             'gender' => $validated['gender'] ?? null,
             'dob' => $validated['dob'] ?? null,
@@ -208,12 +221,16 @@ class AuthController extends Controller
             'image' => $imagePath,
         ]);
 
-        // Automatically prepare the public author profile so the user can publish.
-        // This is linked by user_id, which is what articles.author_id resolves against.
-        $user->ensureAuthorProfile();
+        if ($assignedUserType === 2) {
+            $user->ensureAuthorProfile();
+        }
 
         Auth::login($user);
         $request->session()->regenerate();
+
+        if ($assignedUserType === 0 && $requireApproval) {
+            return redirect()->route('dashboard.index')->with('success', 'Welcome, ' . $user->name . '! Your account has been registered and is pending administrator author approval.');
+        }
 
         return redirect()->route('dashboard.index')->with('success', 'Registration successful! Welcome to BlogHub, ' . $user->name . '.');
     }

@@ -13,10 +13,13 @@ class SearchController extends Controller
         $query = $request->get('q', '');
         
         if (!empty($query)) {
-            $articles = Article::with(['category', 'author'])
-                ->where('title', 'like', "%{$query}%")
-                ->orWhere('excerpt', 'like', "%{$query}%")
-                ->orWhere('body', 'like', "%{$query}%")
+            $articles = Article::approved()->with(['category', 'author'])
+                ->where(function($q) use ($query) {
+                    $q->where('title', 'like', "%{$query}%")
+                      ->orWhere('excerpt', 'like', "%{$query}%")
+                      ->orWhere('body', 'like', "%{$query}%");
+                })
+                ->latest('published_at')
                 ->paginate(9);
         } else {
             $articles = collect();

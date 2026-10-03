@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="{{ setting('theme_mode', 'light') === 'dark' ? 'dark' : 'light' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'BlogHub — Modern Blogging Platform')</title>
-    <meta name="description" content="@yield('meta_description', 'BlogHub is a premier multi-category blogging and content management platform.')">
+    <title>@yield('title', setting('site_name', 'BlogHub') . ' — ' . setting('site_tagline', 'Modern Blogging Platform'))</title>
+    <meta name="description" content="@yield('meta_description', setting('site_description', 'BlogHub is a premier multi-category blogging and content management platform.'))">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     
+    @if(setting('site_favicon'))
+    <link rel="icon" href="{{ asset('storage/' . setting('site_favicon')) }}">
+    @endif
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +23,16 @@
     
     <!-- Custom BlogHub Design System CSS -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+    @if(setting('primary_color') && setting('primary_color') !== '#C8461F')
+    <style>
+        :root {
+            --bh-accent: {{ setting('primary_color') }};
+            --brand: {{ setting('primary_color') }};
+        }
+    </style>
+    @endif
+
     @stack('styles')
 </head>
 <body>

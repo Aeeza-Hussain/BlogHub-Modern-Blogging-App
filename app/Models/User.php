@@ -23,12 +23,14 @@ class User extends Authenticatable
         'email',
         'password',
         'user_type',
+        'is_active',
         'contact',
         'gender',
         'dob',
         'image',
         'about',
         'niche',
+        'notification_preferences',
     ];
 
     /**
@@ -53,7 +55,23 @@ class User extends Authenticatable
             'password' => 'hashed',
             'dob' => 'date',
             'user_type' => 'integer',
+            'is_active' => 'boolean',
+            'notification_preferences' => 'array',
         ];
+    }
+
+    /**
+     * Get notification preferences with sensible defaults.
+     */
+    public function getNotificationPreferences(): array
+    {
+        $defaults = [
+            'email_new_comment' => true,
+            'email_article_status' => true,
+            'email_weekly_digest' => true,
+            'email_platform_updates' => false,
+        ];
+        return array_merge($defaults, $this->notification_preferences ?? []);
     }
 
     /**

@@ -11,7 +11,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        require_once app_path('helpers.php');
     }
 
     /**
@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+                \Illuminate\Support\Facades\View::share('siteSettings', \App\Models\Setting::getAllKeyValues());
+            }
+        } catch (\Throwable $e) {
+            // Ignore during migrations or CLI operations
+        }
     }
 }
